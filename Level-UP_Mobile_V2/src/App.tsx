@@ -116,7 +116,7 @@ function App() {
             color: currentView === 'perfil' ? 'black' : 'white'
           }}
         >
-          👤 Perfil ({currentUser ? currentUser.nombre : 'Invitado'})
+          👤 Perfil 
         </button>
       </div>
 

@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
-import type { Usuario } from '../Interfaces/Usuario';
+import type { Usuario } from '../Interfaces/Usuario'; 
 
 const primaryColor = '#000000';
 const accentBlue = '#1E90FF';
-const neonGreen = '#39FF14';
-const mainText = '#FFFFFF';
-const fontFamily = 'Roboto, sans-serif';
+const neonGreen = '#39FF14'; 
+const mainText = '#FFFFFF'; 
+const fontFamily = 'Roboto, sans-serif'; 
 const headerFont = 'Orbitron, sans-serif';
-
 const containerStyle: React.CSSProperties = {
   backgroundColor: primaryColor,
   color: mainText,
@@ -52,6 +51,7 @@ const PagRegistro: React.FC = () => {
   const [nombre, setNombre] = useState('');
   const [email, setEmail] = useState('');
   const [fechaNacimiento, setFechaNacimiento] = useState('');
+  const [codigoReferido, setCodigoReferido] = useState('');
   const [error, setError] = useState('');
   const [mensajeExito, setMensajeExito] = useState('');
 
@@ -65,7 +65,6 @@ const PagRegistro: React.FC = () => {
     const edad = hoy.getFullYear() - nacimiento.getFullYear();
     const mes = hoy.getMonth() - nacimiento.getMonth();
     const dia = hoy.getDate() - nacimiento.getDate();
-
     const EsMayorEdad = edad > 18 || (edad === 18 && (mes > 0 || (mes === 0 && dia >= 0)));
 
     if (!EsMayorEdad) {
@@ -74,6 +73,12 @@ const PagRegistro: React.FC = () => {
     }
 
     const EsDuoc = email.endsWith('@duoc.cl') || email.endsWith('@alumnos.duoc.cl');
+    
+    let puntosIniciales = 0;
+    if (codigoReferido) {
+        puntosIniciales = 100;
+        console.log(`Referido detectado: Se otorgarán puntos al referente.`);
+    }
 
     const nuevoUsuario: Usuario = {
       id: Date.now().toString(),
@@ -82,6 +87,8 @@ const PagRegistro: React.FC = () => {
       fechaNacimiento,
       EsDuoc,
       EsMayorEdad: true,
+      puntosLevelUp: puntosIniciales, 
+      nivel: 1,
     };
 
     console.log('Usuario Registrado:', nuevoUsuario);
@@ -90,11 +97,15 @@ const PagRegistro: React.FC = () => {
     if (EsDuoc) {
         mensaje += ' ¡Felicidades! Tienes un descuento del 20% de por vida por ser de Duoc.';
     }
+    if (puntosIniciales > 0) {
+        mensaje += ` Además, ¡ganaste ${puntosIniciales} Puntos LevelUp por tu referido!`;
+    }
     setMensajeExito(mensaje);
     
     setNombre('');
     setEmail('');
     setFechaNacimiento('');
+    setCodigoReferido('');
   };
 
   return (
@@ -137,6 +148,17 @@ const PagRegistro: React.FC = () => {
           />
         </div>
         
+        <div>
+          <label htmlFor="referido">Código de Referido (Opcional):</label>
+          <input
+            id="referido"
+            type="text"
+            value={codigoReferido}
+            onChange={(e) => setCodigoReferido(e.target.value)}
+            style={inputStyle}
+          />
+        </div>
+        
         {error && <p style={errorStyle}>{error}</p>}
         {mensajeExito && <p style={{ color: neonGreen, marginTop: '15px' }}>{mensajeExito}</p>}
 
@@ -148,4 +170,4 @@ const PagRegistro: React.FC = () => {
   );
 };
 
-export default PagRegistro
+export default PagRegistro;

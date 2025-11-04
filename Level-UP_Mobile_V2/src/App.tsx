@@ -21,6 +21,8 @@ function App() {
     fechaNacimiento: '1995-05-20',
     EsDuoc: true,
     EsMayorEdad: true,
+    puntosLevelUp: 1500,
+    nivel: 5,
   });
 
   const handleUpdateProfile = (updatedUser: Usuario) => {

@@ -5,4 +5,6 @@ export interface Usuario {
   fechaNacimiento: string;
   EsDuoc: boolean;
   EsMayorEdad: boolean;
+  puntosLevelUp: number; 
+  nivel: number;
 }

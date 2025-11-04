@@ -6,7 +6,7 @@ import type { Producto } from './Interfaces/Producto';
 import type { Item } from './Interfaces/ItemCarrito'; 
 import PagPerfil from './Pages/PagPerfil';
 import type { Usuario } from './Interfaces/Usuario';
-import SupportChat from './Components/SupportChat.tsx'; 
+import SupportChat from './Components/SupportChat'; 
 
 import './App.css'; 
 
@@ -28,7 +28,7 @@ function App() {
 
   const handleUpdateProfile = (updatedUser: Usuario) => {
       setCurrentUser(updatedUser);
-      alert('Perfil actualizado con éxito!');
+      console.log('Perfil actualizado con éxito!', updatedUser);
   };
 
   const handleAddToCart = (productoAñadir: Producto) => {
@@ -54,21 +54,12 @@ function App() {
     if (currentView === 'carrito') {
       return <PagCarrito items={cartItems} />;
     }
-    if (currentView === 'catalogo') {
-      return <PagCatalogo onAddToCart={handleAddToCart} />;
-    } 
     if (currentView === 'perfil') {
       return <PagPerfil user={currentUser} onUpdate={handleUpdateProfile} />;
     }
     return <PagCatalogo onAddToCart={handleAddToCart} />;
   };
-
-  const navButtonStyle: React.CSSProperties = {
-    color: 'white', 
-    border: 'none', 
-    fontWeight: 'bold'
-  };
-
+  
   return (
     <div className="app-container">
       <h1 style={{ textAlign: 'center', color: '#1E90FF', fontFamily: 'Orbitron, sans-serif' }} className="mt-3">
@@ -79,10 +70,10 @@ function App() {
         
         <button 
           onClick={() => setCurrentView('catalogo')} 
-          className="btn"
+          className="btn btn-outline-light"
           style={{ 
-            ...navButtonStyle,
-            backgroundColor: currentView === 'catalogo' ? '#1E90FF' : 'transparent',
+            backgroundColor: currentView === 'catalogo' ? '#1E90FF' : 'transparent', // Color de acento Azul
+            color: 'white', fontWeight: 'bold'
           }}
         >
           Catálogo
@@ -90,10 +81,10 @@ function App() {
         
         <button 
           onClick={() => setCurrentView('carrito')} 
-          className="btn"
+          className="btn btn-outline-light"
           style={{ 
-            ...navButtonStyle,
             backgroundColor: currentView === 'carrito' ? '#1E90FF' : 'transparent',
+            color: 'white', fontWeight: 'bold'
           }}
         >
           🛒 Carrito ({cartItems.length})
@@ -101,11 +92,10 @@ function App() {
 
         <button 
           onClick={() => setCurrentView('registro')} 
-          className="btn"
+          className="btn btn-outline-light" 
           style={{ 
-            ...navButtonStyle,
             backgroundColor: currentView === 'registro' ? '#39FF14' : 'transparent',
-            color: currentView === 'registro' ? 'black' : 'white'
+            color: currentView === 'registro' ? 'black' : 'white', fontWeight: 'bold'
           }}
         >
           👤 Registro
@@ -113,11 +103,10 @@ function App() {
         
         <button 
           onClick={() => setCurrentView('perfil')} 
-          className="btn"
+          className="btn btn-outline-light"
           style={{ 
-            ...navButtonStyle,
             backgroundColor: currentView === 'perfil' ? '#39FF14' : 'transparent',
-            color: currentView === 'perfil' ? 'black' : 'white'
+            color: currentView === 'perfil' ? 'black' : 'white', fontWeight: 'bold'
           }}
         >
           👤 Perfil 

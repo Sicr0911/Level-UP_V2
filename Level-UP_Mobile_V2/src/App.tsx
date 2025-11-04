@@ -51,8 +51,9 @@ function App() {
     if (currentView === 'carrito') {
       return <PagCarrito items={cartItems} />;
     }
-    return <PagCatalogo onAddToCart={handleAddToCart} />;
-
+    if (currentView === 'catalogo') {
+      return <PagCatalogo onAddToCart={handleAddToCart} />;
+    } 
     if (currentView === 'perfil') {
       return <PagPerfil user={currentUser} onUpdate={handleUpdateProfile} />;
     }

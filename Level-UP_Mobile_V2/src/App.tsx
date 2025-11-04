@@ -6,6 +6,7 @@ import type { Producto } from './Interfaces/Producto';
 import type { Item } from './Interfaces/ItemCarrito'; 
 import PagPerfil from './Pages/PagPerfil';
 import type { Usuario } from './Interfaces/Usuario';
+import SupportChat from './Components/SupportChat.tsx'; 
 
 import './App.css'; 
 
@@ -59,30 +60,26 @@ function App() {
     if (currentView === 'perfil') {
       return <PagPerfil user={currentUser} onUpdate={handleUpdateProfile} />;
     }
-
+    return <PagCatalogo onAddToCart={handleAddToCart} />;
   };
-
 
   const navButtonStyle: React.CSSProperties = {
     color: 'white', 
     border: 'none', 
-    padding: '10px 15px', 
-    margin: '0 5px', 
-    cursor: 'pointer',
-    borderRadius: '5px',
     fontWeight: 'bold'
   };
 
   return (
     <div className="app-container">
-      <h1 style={{ textAlign: 'center', color: '#1E90FF', fontFamily: 'Orbitron, sans-serif' }}>
+      <h1 style={{ textAlign: 'center', color: '#1E90FF', fontFamily: 'Orbitron, sans-serif' }} className="mt-3">
         LEVEL-UP GAMER - Tienda Online
       </h1>
 
-      <div style={{ padding: '10px', backgroundColor: '#000000', textAlign: 'center', borderBottom: '2px solid #39FF14' }}>
+      <div className="d-flex flex-column flex-md-row justify-content-center p-3 gap-2 border-bottom mb-4" style={{ backgroundColor: '#000000', borderColor: '#39FF14' }}>
         
         <button 
           onClick={() => setCurrentView('catalogo')} 
+          className="btn"
           style={{ 
             ...navButtonStyle,
             backgroundColor: currentView === 'catalogo' ? '#1E90FF' : 'transparent',
@@ -93,6 +90,7 @@ function App() {
         
         <button 
           onClick={() => setCurrentView('carrito')} 
+          className="btn"
           style={{ 
             ...navButtonStyle,
             backgroundColor: currentView === 'carrito' ? '#1E90FF' : 'transparent',
@@ -103,6 +101,7 @@ function App() {
 
         <button 
           onClick={() => setCurrentView('registro')} 
+          className="btn"
           style={{ 
             ...navButtonStyle,
             backgroundColor: currentView === 'registro' ? '#39FF14' : 'transparent',
@@ -111,9 +110,12 @@ function App() {
         >
           👤 Registro
         </button>
+        
         <button 
           onClick={() => setCurrentView('perfil')} 
+          className="btn"
           style={{ 
+            ...navButtonStyle,
             backgroundColor: currentView === 'perfil' ? '#39FF14' : 'transparent',
             color: currentView === 'perfil' ? 'black' : 'white'
           }}
@@ -123,6 +125,8 @@ function App() {
       </div>
 
       {renderView()}
+      
+      <SupportChat />
       
     </div>
   );

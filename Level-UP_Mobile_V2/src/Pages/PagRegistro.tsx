@@ -5,40 +5,19 @@ const primaryColor = '#000000';
 const accentBlue = '#1E90FF';
 const neonGreen = '#39FF14'; 
 const mainText = '#FFFFFF'; 
-const fontFamily = 'Roboto, sans-serif'; 
 const headerFont = 'Orbitron, sans-serif';
-const containerStyle: React.CSSProperties = {
-  backgroundColor: primaryColor,
-  color: mainText,
-  padding: '40px',
-  margin: '40px auto',
-  maxWidth: '450px',
-  borderRadius: '10px',
-  border: `2px solid ${accentBlue}`,
-  fontFamily: fontFamily
-};
 
 const inputStyle: React.CSSProperties = {
-  width: '100%',
-  padding: '10px',
-  margin: '8px 0',
-  boxSizing: 'border-box',
   backgroundColor: '#333',
   border: `1px solid ${accentBlue}`,
   color: mainText,
-  borderRadius: '4px'
+  borderRadius: '4px',
 };
 
 const buttonStyle: React.CSSProperties = {
   backgroundColor: neonGreen,
   color: primaryColor,
-  padding: '10px 15px',
-  border: 'none',
-  borderRadius: '5px',
-  cursor: 'pointer',
-  marginTop: '20px',
   fontWeight: 'bold',
-  width: '100%'
 };
 
 const errorStyle: React.CSSProperties = {
@@ -108,64 +87,80 @@ const PagRegistro: React.FC = () => {
     setCodigoReferido('');
   };
 
-  return (
-    <div style={containerStyle}>
-      <h2 style={{ color: accentBlue, fontFamily: headerFont, textAlign: 'center' }}>
-        Registro Level-Up | Únete a la Comunidad
-      </h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="nombre">Nombre de Usuario:</label>
-          <input
-            id="nombre"
-            type="text"
-            value={nombre}
-            onChange={(e) => setNombre(e.target.value)}
-            style={inputStyle}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="email">Email (Ej: usuario@duoc.cl):</label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            style={inputStyle}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="fechaNacimiento">Fecha de Nacimiento:</label>
-          <input
-            id="fechaNacimiento"
-            type="date"
-            value={fechaNacimiento}
-            onChange={(e) => setFechaNacimiento(e.target.value)}
-            style={inputStyle}
-            required
-          />
-        </div>
-        
-        <div>
-          <label htmlFor="referido">Código de Referido (Opcional):</label>
-          <input
-            id="referido"
-            type="text"
-            value={codigoReferido}
-            onChange={(e) => setCodigoReferido(e.target.value)}
-            style={inputStyle}
-          />
-        </div>
-        
-        {error && <p style={errorStyle}>{error}</p>}
-        {mensajeExito && <p style={{ color: neonGreen, marginTop: '15px' }}>{mensajeExito}</p>}
+  const formContainerStyle: React.CSSProperties = {
+    backgroundColor: primaryColor,
+    color: mainText,
+    border: `2px solid ${accentBlue}`,
+    fontFamily: 'Roboto, sans-serif'
+  };
 
-        <button type="submit" style={buttonStyle}>
-          ¡Registrarse!
-        </button>
-      </form>
+  return (
+    <div className="container my-5">
+        <div className="row justify-content-center">
+            <div className="col-12 col-md-8 col-lg-5"> 
+                <div style={formContainerStyle} className="p-4 rounded-3">
+                    <h2 style={{ color: accentBlue, fontFamily: headerFont, textAlign: 'center' }} className="mb-4">
+                        Registro Level-Up | Únete a la Comunidad
+                    </h2>
+                    <form onSubmit={handleSubmit}>
+                        <div className="mb-3">
+                          <label htmlFor="nombre" className="form-label">Nombre de Usuario:</label>
+                          <input
+                            id="nombre"
+                            type="text"
+                            value={nombre}
+                            onChange={(e) => setNombre(e.target.value)}
+                            style={inputStyle}
+                            className="form-control"
+                            required
+                          />
+                        </div>
+                        <div className="mb-3">
+                          <label htmlFor="email" className="form-label">Email (Ej: usuario@duoc.cl):</label>
+                          <input
+                            id="email"
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            style={inputStyle}
+                            className="form-control"
+                            required
+                          />
+                        </div>
+                        <div className="mb-3">
+                          <label htmlFor="fechaNacimiento" className="form-label">Fecha de Nacimiento:</label>
+                          <input
+                            id="fechaNacimiento"
+                            type="date"
+                            value={fechaNacimiento}
+                            onChange={(e) => setFechaNacimiento(e.target.value)}
+                            style={inputStyle}
+                            className="form-control"
+                            required
+                          />
+                        </div>
+                        <div className="mb-4">
+                          <label htmlFor="referido" className="form-label">Código de Referido (Opcional):</label>
+                          <input
+                            id="referido"
+                            type="text"
+                            value={codigoReferido}
+                            onChange={(e) => setCodigoReferido(e.target.value)}
+                            style={inputStyle}
+                            className="form-control"
+                          />
+                        </div>
+                        
+                        {error && <p style={errorStyle}>{error}</p>}
+                        {mensajeExito && <p style={{ color: neonGreen, marginTop: '15px' }}>{mensajeExito}</p>}
+
+                        <button type="submit" style={buttonStyle} className="btn btn-lg w-100">
+                          ¡Registrarse!
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
   );
 };

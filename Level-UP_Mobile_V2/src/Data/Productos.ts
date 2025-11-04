@@ -53,7 +53,7 @@ export const PRODUCTOS: Producto[] = [
     codigo: 'PP001',
     categoria: 'Poleras Personalizadas',
     nombre: "Polera Gamer Personalizada 'Level-Up'",
-    precio: 14990, // $14.990 CLP
+    precio: 14990,
     descripcion: 'Una camiseta cómoda y estilizada, con la posibilidad de personalizarla con tu gamer tag o diseño favorito.'
   }
 ];

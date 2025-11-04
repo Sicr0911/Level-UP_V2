@@ -1,5 +1,3 @@
-// src/Pages/PagCatalogo.tsx
-
 import React, { useState, useMemo } from 'react';
 import ProductCard from '../Components/ProductoDesc'; 
 import { PRODUCTOS } from '../Data/Productos';
@@ -43,7 +41,6 @@ const PagCatalogo: React.FC<PagCatalogoProps> = ({ onAddToCart }) => {
     const pageStyle: React.CSSProperties = {
         backgroundColor: primaryColor,
         minHeight: '100vh',
-        padding: '20px',
         color: mainText,
     };
 
@@ -51,59 +48,49 @@ const PagCatalogo: React.FC<PagCatalogoProps> = ({ onAddToCart }) => {
         textAlign: 'center',
         fontFamily: headerFont,
         color: accentBlue,
-        marginBottom: '30px',
-    };
-
-    const catalogContainerStyle: React.CSSProperties = {
-        display: 'flex',
-        flexWrap: 'wrap',
-        justifyContent: 'center',
-        marginTop: '20px'
     };
 
     const filterContainerStyle: React.CSSProperties = {
-        display: 'flex',
-        justifyContent: 'center',
-        gap: '20px',
-        padding: '20px',
         backgroundColor: '#111',
-        borderRadius: '8px',
-        marginBottom: '20px'
+        border: `1px solid ${accentBlue}`,
     };
 
     const inputStyle: React.CSSProperties = {
-        padding: '10px',
-        borderRadius: '5px',
-        border: `1px solid ${accentBlue}`,
         backgroundColor: '#333',
         color: mainText,
-        minWidth: '250px'
+        border: `1px solid ${accentBlue}`,
     };
     
     return (
-        <div style={pageStyle}>
-            <h2 style={headerStyle}>🎮 Catálogo de Productos Level-Up Gamer 🎮</h2>
+        <div style={pageStyle} className="container-fluid p-4">
+            <h2 style={headerStyle} className="mb-4">🎮 Catálogo de Productos Level-Up Gamer 🎮</h2>
 
-            <div style={filterContainerStyle}>
+            <div className="row justify-content-center g-3 p-3 rounded-3 mb-4" style={filterContainerStyle}>
                 
-                <input
-                    type="text"
-                    placeholder="Buscar por nombre o descripción..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    style={inputStyle}
-                />
+                <div className="col-12 col-lg-5">
+                    <input
+                        type="text"
+                        placeholder="Buscar por nombre o descripción..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        style={inputStyle}
+                        className="form-control"
+                    />
+                </div>
 
-                <select
-                    value={selectedCategory}
-                    onChange={(e) => setSelectedCategory(e.target.value)}
-                    style={inputStyle}
-                >
-                    <option value="Todos">Todas las Categorías</option>
-                    {allCategories.map(category => (
-                        <option key={category} value={category}>{category}</option>
-                    ))}
-                </select>
+                <div className="col-12 col-lg-4">
+                    <select
+                        value={selectedCategory}
+                        onChange={(e) => setSelectedCategory(e.target.value)}
+                        style={inputStyle}
+                        className="form-select"
+                    >
+                        <option value="Todos">Todas las Categorías</option>
+                        {allCategories.map(category => (
+                            <option key={category} value={category}>{category}</option>
+                        ))}
+                    </select>
+                </div>
             </div>
 
 
@@ -112,13 +99,14 @@ const PagCatalogo: React.FC<PagCatalogoProps> = ({ onAddToCart }) => {
                     No se encontraron productos que coincidan con los filtros.
                 </p>
             ) : (
-                <div style={catalogContainerStyle}>
+                <div className="row justify-content-center g-4">
                     {filteredProducts.map((producto) => (
-                        <ProductCard 
-                            key={producto.codigo} 
-                            producto={producto} 
-                            onAddToCart={onAddToCart} 
-                        />
+                        <div key={producto.codigo} className="col-12 col-md-6 col-lg-4 col-xl-3 d-flex justify-content-center">
+                            <ProductCard 
+                                producto={producto} 
+                                onAddToCart={onAddToCart} 
+                            />
+                        </div>
                     ))}
                 </div>
             )}

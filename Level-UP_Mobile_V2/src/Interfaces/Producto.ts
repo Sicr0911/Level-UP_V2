@@ -5,4 +5,5 @@ export interface Producto {
   precio: number; 
   descripcion: string;
   fabricante?: string;
+  imagen: String;
 }

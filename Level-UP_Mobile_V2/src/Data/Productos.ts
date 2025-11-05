@@ -6,7 +6,8 @@ export const PRODUCTOS: Producto[] = [
     categoria: 'Juegos de Mesa',
     nombre: 'Catan',
     precio: 29990,
-    descripcion: 'Un clásico juego de estrategia donde los jugadores compiten por colonizar y expandirse en la isla de Catan. Ideal para 3-4 jugadores y perfecto para noches de juego en familia o con amigos.'
+    descripcion: 'Un clásico juego de estrategia donde los jugadores compiten por colonizar y expandirse en la isla de Catan. Ideal para 3-4 jugadores y perfecto para noches de juego en familia o con amigos.',
+    imagen: 'Level-UP_Mobile_V2\src\IMG\juegoCatan.png'
   },
 
   {

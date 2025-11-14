@@ -3,6 +3,7 @@ import type { Item } from '../Interfaces/ItemCarrito';
 
 interface PaginaCarrito {
   items: Item[];
+  onCheckout: () => void;
 }
 
 const formatPrice = (precio: number) => {
@@ -46,7 +47,7 @@ const checkoutButton: React.CSSProperties = {
 };
 
 
-const PagCarrito: React.FC<PaginaCarrito> = ({ items }) => {
+const PagCarrito: React.FC<PaginaCarrito> = ({ items, onCheckout }) => {
   
   const subtotal = items.reduce((acc, item) => {
     return acc + (item.producto.precio * item.cantidad);
@@ -93,7 +94,11 @@ const PagCarrito: React.FC<PaginaCarrito> = ({ items }) => {
                                 <p style={{color: secondaryText}}>Subtotal: <span style={priceSummaryStyle}>{formatPrice(subtotal)}</span></p>
                                 <p style={{fontSize: '1.4em', color: mainText}}>Total a Pagar: <span style={priceSummaryStyle}>{formatPrice(total)}</span></p>
                                 
-                                <button style={checkoutButton} className="btn w-100">
+                                <button 
+                                    style={checkoutButton} 
+                                    className="btn w-100"
+                                    onClick={onCheckout} 
+                                >
                                     Finalizar Compra
                                 </button>
                             </div>

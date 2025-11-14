@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { Usuario } from '../Interfaces/Usuario'; 
+import AlertMessage from '../Components/AlertMessage';
 
 const primaryColor = '#000000';
 const accentBlue = '#1E90FF';
@@ -20,12 +21,6 @@ const buttonStyle: React.CSSProperties = {
   fontWeight: 'bold',
 };
 
-const errorStyle: React.CSSProperties = {
-    color: 'red',
-    fontSize: '0.9em'
-}
-
-
 const PagRegistro: React.FC = () => {
   const [nombre, setNombre] = useState('');
   const [email, setEmail] = useState('');
@@ -43,7 +38,7 @@ const PagRegistro: React.FC = () => {
     const nacimiento = new Date(fechaNacimiento);
     const edad = hoy.getFullYear() - nacimiento.getFullYear();
     const mes = hoy.getMonth() - nacimiento.getMonth();
-    const dia = hoy.getDate() - nacimiento.getDate();
+    const dia = hoy.getDate() - nacimiento.getMonth();
     const EsMayorEdad = edad > 18 || (edad === 18 && (mes > 0 || (mes === 0 && dia >= 0)));
 
     if (!EsMayorEdad) {
@@ -151,8 +146,8 @@ const PagRegistro: React.FC = () => {
                           />
                         </div>
                         
-                        {error && <p style={errorStyle}>{error}</p>}
-                        {mensajeExito && <p style={{ color: neonGreen, marginTop: '15px' }}>{mensajeExito}</p>}
+                        {error && <AlertMessage type="error" message={error} />}
+                        {mensajeExito && <AlertMessage type="success" message={mensajeExito} />}
 
                         <button type="submit" style={buttonStyle} className="btn btn-lg w-100">
                           ¡Registrarse!

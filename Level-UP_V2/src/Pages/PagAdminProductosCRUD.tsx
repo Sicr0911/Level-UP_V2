@@ -5,9 +5,9 @@ import AlertMessage from '../Components/AlertMessage';
 import type { AdminView } from '../Components/AdminLayout';
 
 interface PagAdminProductosCRUDProps {
-    type: 'nuevo' | 'editar';
-    code?: string; 
-    onNavigate: (view: AdminView, productCode?: string) => void;
+    type: 'nuevo' | 'editar';
+    code?: string; 
+    onNavigate: (view: AdminView, productCode?: string) => void;
 }
 
 const primaryColor = '#000000';
@@ -18,16 +18,16 @@ const secondaryText = '#D3D3D3';
 const headerFont = 'Orbitron, sans-serif';
 
 const inputStyle: React.CSSProperties = {
-    backgroundColor: '#333',
-    border: `1px solid ${accentBlue}`,
-    color: mainText,
-    borderRadius: '4px',
+    backgroundColor: '#333',
+    border: `1px solid ${accentBlue}`,
+    color: mainText,
+    borderRadius: '4px',
 };
 
 const allCategories = [...new Set(getAllProducts().map(p => p.categoria))];
 
 const PagAdminProductosCRUD: React.FC<PagAdminProductosCRUDProps> = ({ type, code, onNavigate }) => {
-    const isEditMode = type === 'editar' && code;
+    const isEditMode = type === 'editar' && code; 
 
     const [formData, setFormData] = useState<Producto>({
         codigo: '',
@@ -73,7 +73,7 @@ const PagAdminProductosCRUD: React.FC<PagAdminProductosCRUDProps> = ({ type, cod
             };
             createProduct(nuevoProducto);
             setMensaje({ type: 'success', text: `✅ Producto ${nuevoProducto.nombre} CREADO con éxito. Código: ${nuevoProducto.codigo}` });
-            setFormData({ codigo: '', nombre: '', categoria: allCategories[0] || '', precio: 0, descripcion: '', imagen: '' }); // Limpiar
+            setFormData({ codigo: '', nombre: '', categoria: allCategories[0] || '', precio: 0, descripcion: '', imagen: '' });
         
         } else {
             const productoActualizado = updateProduct(formData);

@@ -1,6 +1,21 @@
 import React from 'react';
 
-export type View = 'catalogo' | 'carrito' | 'registro' | 'perfil' | 'home' | 'ofertas' | 'nosotros' | 'blog' | 'contacto' | 'categorias';
+export type View = 
+    'catalogo' | 
+    'carrito' | 
+    'registro' | 
+    'perfil' | 
+    'home' | 
+    'ofertas' | 
+    'nosotros' | 
+    'blog' | 
+    'contacto' | 
+    'categorias' |
+    'detalleProducto' | 
+    'checkout' |       
+    'pagoExito' |      
+    'pagoError' |     
+    'adminPanel';  
 
 interface NavbarProps {
     currentView: View;
@@ -25,6 +40,7 @@ const Navbar: React.FC<NavbarProps> = ({ currentView, onViewChange, cartItemCoun
         { label: `🛒 Carrito (${cartItemCount})`, view: 'carrito', isAccent: true },
         { label: '👤 Registro', view: 'registro', isAccent: true },
         { label: '👤 Perfil', view: 'perfil', isAccent: true },
+        { label: 'Admin Panel', view: 'adminPanel', isAccent: true },
     ];
 
     const getButtonStyle = (view: View, isAccent?: boolean): React.CSSProperties => ({

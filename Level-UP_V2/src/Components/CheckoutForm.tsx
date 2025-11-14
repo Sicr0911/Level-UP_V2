@@ -6,7 +6,7 @@ import type { Direccion } from '../Interfaces/Direccion';
 interface CheckoutFormProps {
     user: Usuario;
     subtotal: number;
-    onPlaceOrder: (userData: { nombre: string, email: string, direccion: Direccion }) => void;
+    onPlaceOrder: (userData: { nombre: string, apellidos: string, email: string, direccion: Direccion }) => void;
 }
 
 const primaryColor = '#000000';
@@ -67,6 +67,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ user, subtotal, onPlaceOrde
 
         const userData = {
             nombre,
+            apellidos,
             email,
             direccion
         };

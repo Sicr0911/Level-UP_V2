@@ -1,90 +1,169 @@
 // src/App.tsx
 
-import { useState } from 'react';
-import PagCatalogo from './Pages/PagCatalogo'; 
-import PagCarrito from './Pages/PagCarrito'; 
+import React, { useState, useEffect } from 'react';
+import PagCatalogo from './Pages/PagCatalogo';
+import PagCarrito from './Pages/PagCarrito';
 import PagRegistro from './Pages/PagRegistro';
+import PagPerfil from './Pages/PagPerfil';
+import PagHome from './Pages/PagHome'; 
+import PagCheckout from './Pages/PagCheckout'; 
+import PagAdmin from './Pages/PagAdmin';
+import PagDetalleProducto from './Pages/PagDetalleProducto';
 import type { Producto } from './Interfaces/Producto';
 import type { Item } from './Interfaces/ItemCarrito'; 
-import PagPerfil from './Pages/PagPerfil';
 import type { Usuario } from './Interfaces/Usuario';
 import SupportChat from './Components/SupportChat'; 
 import Navbar, { type View } from './Components/NavBar';
+import Footer from './Components/Footer'; 
 import './App.css'; 
 
+
+const getInitialCart = (): Item[] => {
+  const savedCart = localStorage.getItem('level-up-cart');
+  return savedCart ? JSON.parse(savedCart) : [];
+};
+
 function App() {
-  const [cartItems, setCartItems] = useState<Item[]>([]);
+  const [cartItems, setCartItems] = useState<Item[]>(getInitialCart); 
+  
+  const [currentView, setCurrentView] = useState<View>('home'); 
 
-  const [currentView, setCurrentView] = useState<View>('catalogo'); 
+  const [currentUser, setCurrentUser] = useState<Usuario>({
+    id: 'user_001',
+    nombre: 'GamerDuoc',
+    email: 'gamerduoc@alumnos.duoc.cl',
+    fechaNacimiento: '1995-05-20',
+    EsDuoc: true,
+    EsMayorEdad: true,
+    puntosLevelUp: 1500,
+    nivel: 5,
+  });
+  
+  const [selectedProductCode, setSelectedProductCode] = useState<string | undefined>(undefined);
+  const [lastOrderId, setLastOrderId] = useState<string | null>(null);
+  const [failedCart, setFailedCart] = useState<Item[]>([]);
+  const [isAdmin, setIsAdmin] = useState(true);
 
-  const [currentUser, setCurrentUser] = useState<Usuario>({
-    id: 'user_001',
-    nombre: 'GamerDuoc',
-    email: 'gamerduoc@alumnos.duoc.cl',
-    fechaNacimiento: '1995-05-20',
-    EsDuoc: true,
-    EsMayorEdad: true,
-    puntosLevelUp: 1500,
-    nivel: 5,
-  });
+  useEffect(() => {
+    localStorage.setItem('level-up-cart', JSON.stringify(cartItems));
+  }, [cartItems]);
 
-  const handleUpdateProfile = (updatedUser: Usuario) => {
-      setCurrentUser(updatedUser);
-      console.log('Perfil actualizado con éxito!', updatedUser);
-  };
+  const handleUpdateProfile = (updatedUser: Usuario) => {
+      setCurrentUser(updatedUser);
+      console.log('Perfil actualizado con éxito!', updatedUser);
+  };
 
-  const handleAddToCart = (productoAñadir: Producto) => {
-    setCartItems(prevItems => {
-      const existingItem = prevItems.find(item => item.producto.codigo === productoAñadir.codigo); 
-      
-      if (existingItem) {
-        return prevItems.map(item =>
-          item.producto.codigo === productoAñadir.codigo
-            ? { ...item, cantidad: item.cantidad + 1 }
-            : item
-        );
-      } else {
-        return [...prevItems, { producto: productoAñadir, cantidad: 1 }];
-      }
-    });
-  };
+  const handleAddToCart = (productoAñadir: Producto, cantidad: number = 1) => {
+    setCartItems(prevItems => {
+      const existingItem = prevItems.find(item => item.producto.codigo === productoAñadir.codigo); 
+      
+      if (existingItem) {
+        return prevItems.map(item =>
+          item.producto.codigo === productoAñadir.codigo
+            ? { ...item, cantidad: item.cantidad + cantidad }
+            : item
+        );
+      } else {
+        return [...prevItems, { producto: productoAñadir, cantidad: cantidad }];
+      }
+    });
+  };
 
-  const renderView = () => {
-    if (currentView === 'registro') {
-      return <PagRegistro />;
-    }
-    if (currentView === 'carrito') {
-      return <PagCarrito items={cartItems} />;
-    }
-    if (currentView === 'perfil') {
-      return <PagPerfil user={currentUser} onUpdate={handleUpdateProfile} />;
-    }
-    if (currentView === 'catalogo' || currentView === 'home') {
-        return <PagCatalogo onAddToCart={handleAddToCart} />;
-    }
-    
-    return (
-        <div className="container p-5 text-center">
-            <h2 style={{ color: '#FF5733', fontFamily: 'Orbitron, sans-serif' }}>Página en Construcción 🚧</h2>
-            <p style={{ color: '#D3D3D3' }}>La vista de **{currentView.toUpperCase()}** aún no ha sido implementada.</p>
-        </div>
-    );
-  };
-  
-  return (
-    <div className="app-container">
-      <Navbar 
-          currentView={currentView}
-          onViewChange={setCurrentView}
-          cartItemCount={cartItems.length}
-      />
+  const handlePaymentSuccess = (orderId: string) => {
+     setFailedCart(cartItems); // Guardar los items comprados para la vista de éxito
+      setCartItems([]); 
+      setLastOrderId(orderId);
+      setCurrentView('pagoExito');
+  };
 
-      {renderView()}
-      
-      <SupportChat />
-      
-    </div>
-  );
+  const handlePaymentFailure = (orderId: string, failedItems: Item[]) => {
+      setLastOrderId(orderId);
+      setFailedCart(failedItems); 
+      setCurrentView('pagoError');
+  };
+  
+  const CustomPaymentView: React.FC<{ success: boolean }> = ({ success }) => {
+    const color = success ? '#39FF14' : 'red';
+    const itemsToShow = failedCart;
+    const total = itemsToShow.reduce((acc, item) => acc + (item.producto.precio * item.cantidad), 0);
+    const formatPrice = (price: number) => price.toLocaleString('es-CL', { style: 'currency', currency: 'CLP', minimumFractionDigits: 0 });
+    
+    return (
+        <div className="container my-5 p-4" style={{ border: `2px solid ${color}`, borderRadius: '8px', backgroundColor: '#111', color: '#FFFFFF' }}>
+            <h2 style={{ color: color, fontFamily: 'Orbitron, sans-serif' }} className="mb-4">
+                {success ? '✅' : '❌'} {success ? '¡Compra Exitosa!' : 'Error al Procesar el Pago'} Nro. {lastOrderId}
+            </h2>
+            
+            {!success && (
+                <button onClick={() => setCurrentView('checkout')} className="btn btn-lg mb-4" style={{ backgroundColor: '#1E90FF', color: '#FFFFFF', fontWeight: 'bold' }}>
+                    VOLVER A REALIZAR EL PAGO
+                </button>
+            )}
+
+            <h3 className="text-end" style={{ color: color }}>Total pagado: {formatPrice(total)}</h3>
+            
+            {success && (
+                <button onClick={() => setCurrentView('catalogo')} className="btn btn-lg mt-3 w-100" style={{ backgroundColor: '#39FF14', color: '#000000', fontWeight: 'bold' }}>
+                    Volver al Catálogo
+                </button>
+            )}
+        </div>
+    );
+  };
+
+
+  const renderView = () => {
+    switch (currentView) {
+      case 'home':
+        return <PagHome onAddToCart={(p) => handleAddToCart(p, 1)} />;
+      case 'registro':
+        return <PagRegistro />;
+      case 'carrito':
+        return <PagCarrito items={cartItems} onCheckout={() => setCurrentView('checkout')} />;
+      case 'checkout':
+        return (
+          <PagCheckout
+            items={cartItems}
+            user={currentUser}
+            onPaymentSuccess={handlePaymentSuccess}
+            onPaymentFailure={handlePaymentFailure}
+          />
+        );
+      case 'pagoExito':
+      case 'pagoError':
+        return <CustomPaymentView success={currentView === 'pagoExito'} />;
+      case 'perfil':
+        return <PagPerfil user={currentUser} onUpdate={handleUpdateProfile} />;
+      case 'detalleProducto':
+        if (selectedProductCode) {
+          return <PagDetalleProducto productoCodigo={selectedProductCode} onAddToCart={handleAddToCart} />;
+        }
+        return <PagCatalogo onAddToCart={(p) => handleAddToCart(p, 1)} />;
+      case 'adminPanel':
+        if (isAdmin) return <PagAdmin />;
+        return <PagCatalogo onAddToCart={(p) => handleAddToCart(p, 1)} />;
+      case 'catalogo':
+      default:
+        return <PagCatalogo onAddToCart={(p) => handleAddToCart(p, 1)} />;
+    }
+  };
+  
+  return (
+    <div className="app-container">
+      <Navbar 
+          currentView={currentView}
+          onViewChange={setCurrentView}
+          cartItemCount={cartItems.length}
+      />
+
+      <main>
+          {renderView()}
+      </main>
+      
+      <SupportChat />
+      <Footer /> 
+    </div>
+  );
 }
 
 export default App;

@@ -1,13 +1,7 @@
 import React, { useState } from 'react';
 import type { Usuario } from '../Interfaces/Usuario';
+import type { Direccion } from '../Interfaces/Direccion';
 
-interface Direccion {
-    calle: string;
-    departamento: string;
-    region: string;
-    comuna: string;
-    indicaciones: string;
-}
 
 interface CheckoutFormProps {
     user: Usuario;
@@ -63,10 +57,18 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ user, subtotal, onPlaceOrde
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         
+        const direccion: Direccion = {
+            calle, 
+            departamento, 
+            region, 
+            comuna, 
+            indicaciones
+        };
+
         const userData = {
             nombre,
             email,
-            direccion: { calle, departamento, region, comuna, indicaciones }
+            direccion
         };
         
         onPlaceOrder(userData);

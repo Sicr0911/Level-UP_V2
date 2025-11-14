@@ -1,16 +1,16 @@
 import type { Producto } from '../Interfaces/Producto';
 import audifonos from '../IMG/Audifonos.png';
 import catan from '../IMG/juegoCatan.png';
-import carcassonne from '../IMG/juegoCarcassonne.png';
+import silla from '../IMG/silla_gamer.png';
+import polera from '../IMG/polera.png';
 import mandoXbox from '../IMG/mandoXbox.png';
 import mouse from '../IMG/mouse.png';
 import mousepad from '../IMG/mousepad.png';
 import pc from '../IMG/pc.png';
 import ps5 from '../IMG/ps5.png';
-import silla from '../IMG/silla_gamer.png';
-import polera from '../IMG/polera.png';
 
-export const PRODUCTOS: Producto[] = [
+
+const initialProducts = [
   {
     codigo: 'JM001',
     categoria: 'Juegos de Mesa',
@@ -19,7 +19,6 @@ export const PRODUCTOS: Producto[] = [
     descripcion: 'Un clásico juego de estrategia donde los jugadores compiten por colonizar y expandirse en la isla de Catan. Ideal para 3-4 jugadores y perfecto para noches de juego en familia o con amigos.',
     imagen: catan
   },
-
   {
     codigo: 'AU001',
     categoria: 'Audifonos',
@@ -28,16 +27,14 @@ export const PRODUCTOS: Producto[] = [
     descripcion : 'Proporcionan un sonido envolvente de calidad con un micrófono desmontable y almohadillas de espuma viscoelástica para mayor comodidad durante largas sesiones de juego.',
     imagen: audifonos
   },
-
   {
     codigo: 'JM002',
     categoria: 'Juegos de Mesa',
     nombre: 'Carcassonne',
     precio: 24990,
     descripcion : 'Un juego de colocación de fichas donde los jugadores construyen el paisaje alrededor de la fortaleza medieval de Carcassonne. Ideal para 2-5 jugadores y fácil de aprender.',
-    imagen: carcassonne
+    imagen: catan 
   },
-
   {
     codigo: 'AC001',
     categoria: 'Accesorios',
@@ -46,7 +43,6 @@ export const PRODUCTOS: Producto[] = [
     descripcion: 'Ofrece una experiencia de juego cómoda con botones mapeables y una respuesta táctil mejorada. Compatible con consolas Xbox y PC.',
     imagen: mandoXbox
   },
-
   {
     codigo: 'CO001',
     categoria: 'Consolas',
@@ -55,7 +51,6 @@ export const PRODUCTOS: Producto[] = [
     descripcion: 'La consola de última generación de Sony, que ofrece gráficos impresionantes y tiempos de carga ultrarrápidos para una experiencia de juego inmersiva.',
     imagen: ps5
   },
-
   {
     codigo: 'CG001',
     categoria: 'Computadores Gamers',
@@ -64,7 +59,6 @@ export const PRODUCTOS: Producto[] = [
     descripcion: 'Un potente equipo diseñado para los gamers más exigentes, equipado con los últimos componentes para ofrecer un rendimiento excepcional en cualquier juego.',
     imagen: pc
   },
-
   {
     codigo: 'SG001',
     categoria: 'Sillas Gamers',
@@ -73,7 +67,6 @@ export const PRODUCTOS: Producto[] = [
     descripcion: 'Diseñada para el máximo confort, esta silla ofrece un soporte ergonómico y personalización ajustable para sesiones de juego prolongadas.',
     imagen: silla
   },
-  
   {
     codigo: 'PP001',
     categoria: 'Poleras Personalizadas',
@@ -82,7 +75,6 @@ export const PRODUCTOS: Producto[] = [
     descripcion: 'Una camiseta cómoda y estilizada, con la posibilidad de personalizarla con tu gamer tag o diseño favorito.',
     imagen: polera
   },
-
   {
     codigo: 'MO001',
     categoria: 'Mouse',
@@ -91,7 +83,6 @@ export const PRODUCTOS: Producto[] = [
     descripcion: 'Con sensor de alta precisión y botones personalizables, este mouse es ideal para gamers que buscan un control preciso y personalización.',
     imagen: mouse
   },
-
   {
     codigo: 'MO002',
     categoria: 'Mousepad',
@@ -101,3 +92,63 @@ export const PRODUCTOS: Producto[] = [
     imagen: mousepad
   }
 ];
+
+let PRODUCTOS: Producto[] = [];
+
+try {
+    const storedProducts = localStorage.getItem('levelup_productos');
+    if (storedProducts) {
+        PRODUCTOS = JSON.parse(storedProducts);
+    } else {
+        PRODUCTOS = initialProducts;
+        localStorage.setItem('levelup_productos', JSON.stringify(PRODUCTOS));
+    }
+} catch (error) {
+    console.error("Error al acceder a localStorage para productos:", error);
+    PRODUCTOS = initialProducts;
+}
+
+const persistProducts = () => {
+    localStorage.setItem('levelup_productos', JSON.stringify(PRODUCTOS));
+};
+
+export const createProduct = (newProduct: Producto): Producto => {
+    if (!newProduct.codigo) {
+        newProduct.codigo = `TEMP${Date.now()}`;
+    }
+    
+    PRODUCTOS.push(newProduct);
+    persistProducts();
+    return newProduct;
+};
+
+export const getAllProducts = (): Producto[] => {
+    return PRODUCTOS;
+};
+
+export const getProductByCode = (codigo: string): Producto | undefined => {
+    return PRODUCTOS.find(p => p.codigo === codigo);
+};
+
+
+export const updateProduct = (updatedProduct: Producto): Producto | null => {
+    const index = PRODUCTOS.findIndex(p => p.codigo === updatedProduct.codigo);
+    
+    if (index !== -1) {
+        PRODUCTOS[index] = updatedProduct;
+        persistProducts();
+        return updatedProduct;
+    }
+    return null;
+};
+
+export const deleteProduct = (codigo: string): boolean => {
+    const initialLength = PRODUCTOS.length;
+    PRODUCTOS = PRODUCTOS.filter(p => p.codigo !== codigo);
+    
+    if (PRODUCTOS.length < initialLength) {
+        persistProducts();
+        return true;
+    }
+    return false;
+};

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import AdminLayout, { type AdminView } from '../Components/AdminLayout';
-import PagAdminProductosList from './PagAdminProductosList'; 
-import PagAdminProductosCRUD from './PagAdminProductosCRUD'; 
-import PagAdminDashboard from './PagAdminDashboard'; 
+import PagAdminProductosList from './AdminProductosList'; 
+import PagAdminProductosCRUD from './AdminProductosCRUD'; 
+import PagAdminDashboard from './AdminDashboard'; 
 
 const PlaceholderView: React.FC<{ view: AdminView }> = ({ view }) => (
     <div className="p-4" style={{ color: '#D3D3D3', border: '1px solid yellow', borderRadius: '8px' }}>

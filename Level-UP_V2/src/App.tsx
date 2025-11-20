@@ -1,5 +1,3 @@
-// src/App.tsx
-
 import React, { useState, useEffect } from 'react';
 import PagCatalogo from './Pages/PagCatalogo';
 import PagCarrito from './Pages/PagCarrito';
@@ -7,8 +5,8 @@ import PagRegistro from './Pages/PagRegistro';
 import PagPerfil from './Pages/PagPerfil';
 import PagHome from './Pages/PagHome'; 
 import PagCheckout from './Pages/PagCheckout'; 
-import PagAdmin from './Pages/PagAdmin';
-import PagDetalleProducto from './Pages/PagDetalleProducto';
+import PagAdmin from './Pages/Admin/Admin';
+import PagDetalleProducto from './Pages/Admin/AdminProductosList';
 import type { Producto } from './Interfaces/Producto';
 import type { Item } from './Interfaces/ItemCarrito'; 
 import type { Usuario } from './Interfaces/Usuario';
@@ -19,44 +17,44 @@ import './App.css';
 
 
 const getInitialCart = (): Item[] => {
-  const savedCart = localStorage.getItem('level-up-cart');
-  return savedCart ? JSON.parse(savedCart) : [];
+  const savedCart = localStorage.getItem('level-up-cart');
+  return savedCart ? JSON.parse(savedCart) : [];
 };
 
 function App() {
-  const [cartItems, setCartItems] = useState<Item[]>(getInitialCart); 
-  
-  const [currentView, setCurrentView] = useState<View>('home'); 
+  const [cartItems, setCartItems] = useState<Item[]>(getInitialCart); 
+  
+  const [currentView, setCurrentView] = useState<View>('home'); 
 
-  const [currentUser, setCurrentUser] = useState<Usuario>({
-    id: 'user_001',
-    nombre: 'GamerDuoc',
-    email: 'gamerduoc@alumnos.duoc.cl',
-    fechaNacimiento: '1995-05-20',
-    EsDuoc: true,
-    EsMayorEdad: true,
-    puntosLevelUp: 1500,
-    nivel: 5,
-  });
-  
-  const [selectedProductCode, setSelectedProductCode] = useState<string | undefined>(undefined);
-  const [lastOrderId, setLastOrderId] = useState<string | null>(null);
-  const [failedCart, setFailedCart] = useState<Item[]>([]);
-  const [isAdmin, setIsAdmin] = useState(true);
+  const [currentUser, setCurrentUser] = useState<Usuario>({
+    id: 'user_001',
+    nombre: 'GamerDuoc',
+    email: 'gamerduoc@alumnos.duoc.cl',
+    fechaNacimiento: '1995-05-20',
+    EsDuoc: true,
+    EsMayorEdad: true,
+    puntosLevelUp: 1500,
+    nivel: 5,
+  });
 
-  useEffect(() => {
-    localStorage.setItem('level-up-cart', JSON.stringify(cartItems));
-  }, [cartItems]);
+  const [selectedProductCode, setSelectedProductCode] = useState<string | undefined>(undefined);
+  const [lastOrderId, setLastOrderId] = useState<string | null>(null);
+  const [failedCart, setFailedCart] = useState<Item[]>([]);
+  const [isAdmin, setIsAdmin] = useState(true);
 
-  const handleUpdateProfile = (updatedUser: Usuario) => {
-      setCurrentUser(updatedUser);
-      console.log('Perfil actualizado con éxito!', updatedUser);
-  };
+  useEffect(() => {
+    localStorage.setItem('level-up-cart', JSON.stringify(cartItems));
+  }, [cartItems]);
 
-  const handleAddToCart = (productoAñadir: Producto, cantidad: number = 1) => {
-    setCartItems(prevItems => {
-      const existingItem = prevItems.find(item => item.producto.codigo === productoAñadir.codigo); 
-      
+  const handleUpdateProfile = (updatedUser: Usuario) => {
+      setCurrentUser(updatedUser);
+      console.log('Perfil actualizado con éxito!', updatedUser);
+  };
+
+  const handleAddToCart = (productoAñadir: Producto, cantidad: number = 1) => {
+    setCartItems(prevItems => {
+      const existingItem = prevItems.find(item => item.producto.codigo === productoAñadir.codigo); 
+
       if (existingItem) {
         return prevItems.map(item =>
           item.producto.codigo === productoAñadir.codigo
@@ -70,7 +68,7 @@ function App() {
   };
 
   const handlePaymentSuccess = (orderId: string) => {
-     setFailedCart(cartItems); // Guardar los items comprados para la vista de éxito
+     setFailedCart(cartItems);
       setCartItems([]); 
       setLastOrderId(orderId);
       setCurrentView('pagoExito');
@@ -139,9 +137,11 @@ function App() {
           return <PagDetalleProducto productoCodigo={selectedProductCode} onAddToCart={handleAddToCart} />;
         }
         return <PagCatalogo onAddToCart={(p) => handleAddToCart(p, 1)} />;
-      case 'adminPanel':
-        if (isAdmin) return <PagAdmin />;
+      case 'catalogo':
         return <PagCatalogo onAddToCart={(p) => handleAddToCart(p, 1)} />;
+
+      case 'adminPanel':
+        return isAdmin ? <PagAdmin /> : <PagCatalogo onAddToCart={(p) => handleAddToCart(p, 1)} />;
       case 'catalogo':
       default:
         return <PagCatalogo onAddToCart={(p) => handleAddToCart(p, 1)} />;

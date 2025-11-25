@@ -1,114 +1,118 @@
-import React from 'react';
-import type { Item } from '../Interfaces/ItemCarrito'; 
+import React, { useState, useMemo } from 'react';
+import ProductCard from '../Components/ProductoDesc'; 
+import { getAllProducts } from '../Data/Productos'; 
+import type { Producto } from '../Interfaces/Producto';
 
-interface PaginaCarrito {
-  items: Item[];
-  onCheckout: () => void;
+interface PagCatalogoProps {
+    onAddToCart: (producto: Producto) => void; 
 }
 
-const formatPrice = (precio: number) => {
-  return precio.toLocaleString('es-CL', {
-    style: 'currency',
-    currency: 'CLP',
-    minimumFractionDigits: 0,
-  });
-};
-
-const primaryColor = '#000000'; 
+const primaryColor = '#000000';
 const accentBlue = '#1E90FF';
 const neonGreen = '#39FF14';
 const mainText = '#FFFFFF';
-const secondaryText = '#D3D3D3'; 
 const headerFont = 'Orbitron, sans-serif';
 
-const headerStyle: React.CSSProperties = {
-  textAlign: 'center',
-  fontFamily: headerFont,
-  color: accentBlue,
-};
+const allProducts = getAllProducts(); 
+const allCategories = [...new Set(allProducts.map(p => p.categoria))];
 
-const summaryStyle: React.CSSProperties = {
-    textAlign: 'right',
-    marginTop: '20px',
-    paddingTop: '15px',
-    borderTop: `2px solid ${accentBlue}`,
-};
+const PagCatalogo: React.FC<PagCatalogoProps> = ({ onAddToCart }) => {
+    
+    const [searchTerm, setSearchTerm] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState('Todos');
 
-const priceSummaryStyle: React.CSSProperties = {
-    fontWeight: 'bold',
-    fontSize: '1.2em',
-    color: neonGreen
-}
+    const filteredProducts = useMemo(() => {
+        let tempProducts = allProducts;
 
-const checkoutButton: React.CSSProperties = {
-    backgroundColor: neonGreen, 
-    color: primaryColor,
-    fontWeight: 'bold',
-};
+        if (selectedCategory !== 'Todos') {
+            tempProducts = tempProducts.filter(p => p.categoria === selectedCategory);
+        }
 
+        if (searchTerm) {
+            const lowerCaseSearch = searchTerm.toLowerCase();
+            tempProducts = tempProducts.filter(p => 
+                p.nombre.toLowerCase().includes(lowerCaseSearch) ||
+                p.descripcion.toLowerCase().includes(lowerCaseSearch)
+            );
+        }
 
-const PagCarrito: React.FC<PaginaCarrito> = ({ items, onCheckout }) => {
-  
-  const subtotal = items.reduce((acc, item) => {
-    return acc + (item.producto.precio * item.cantidad);
-  }, 0);
+        return tempProducts;
+    }, [searchTerm, selectedCategory]);
 
-  const total = subtotal; 
+    const pageStyle: React.CSSProperties = {
+        backgroundColor: primaryColor,
+        minHeight: '100vh',
+        color: mainText,
+    };
 
-  const itemStyle: React.CSSProperties = {
-      borderTop: `1px dotted ${secondaryText}`
-  };
+    const headerStyle: React.CSSProperties = {
+        textAlign: 'center',
+        fontFamily: headerFont,
+        color: accentBlue,
+    };
 
-  const containerStyle: React.CSSProperties = {
-    backgroundColor: primaryColor,
-    color: mainText,
-    border: `1px solid ${accentBlue}`,
-  };
+    const filterContainerStyle: React.CSSProperties = {
+        backgroundColor: '#111',
+        border: `1px solid ${accentBlue}`,
+    };
 
-  return (
-    <div className="container my-5">
-        <div className="row justify-content-center">
-            <div className="col-12 col-lg-8"> 
-                <div style={containerStyle} className="p-4 rounded-3">
-                    <h2 style={headerStyle} className="mb-4">
-                        🛍️ Resumen de Carrito Level-Up Gamer
-                    </h2>
+    const inputStyle: React.CSSProperties = {
+        backgroundColor: '#333',
+        color: mainText,
+        border: `1px solid ${accentBlue}`,
+    };
+    
+    return (
+        <div style={pageStyle} className="container-fluid p-4">
+            <h2 style={headerStyle} className="mb-4">🎮 Catálogo de Productos Level-Up Gamer 🎮</h2>
 
-                    {items.length === 0 ? (
-                        <p className="text-center" style={{ color: secondaryText }}>Tu carrito está vacío. ¡Es hora de subir de nivel tus compras!</p>
-                    ) : (
-                        <>
-                            <div className="mb-4 border-bottom" style={{ borderColor: secondaryText }}>
-                                {items.map((item) => (
-                                    <div key={item.producto.codigo} className="d-flex justify-content-between py-2" style={itemStyle}>
-                                        <span className="text-success me-3" style={{ flex: 2, color: neonGreen }}>{item.producto.nombre}</span>
-                                        <span className="text-secondary me-3" style={{ flex: 1 }}>Cantidad: x{item.cantidad}</span>
-                                        <span className="text-end fw-bold" style={{ flex: 1 }}>
-                                          {formatPrice(item.producto.precio * item.cantidad)}
-                                        </span>
-                                    </div>
-                                ))}
-                            </div>
+            <div className="row justify-content-center g-3 p-3 rounded-3 mb-4" style={filterContainerStyle}>
+                
+                <div className="col-12 col-lg-5">
+                    <input
+                        type="text"
+                        placeholder="Buscar por nombre o descripción..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        style={inputStyle}
+                        className="form-control"
+                    />
+                </div>
 
-                            <div style={summaryStyle}>
-                                <p style={{color: secondaryText}}>Subtotal: <span style={priceSummaryStyle}>{formatPrice(subtotal)}</span></p>
-                                <p style={{fontSize: '1.4em', color: mainText}}>Total a Pagar: <span style={priceSummaryStyle}>{formatPrice(total)}</span></p>
-                                
-                                <button 
-                                    style={checkoutButton} 
-                                    className="btn w-100"
-                                    onClick={onCheckout} 
-                                >
-                                    Finalizar Compra
-                                </button>
-                            </div>
-                        </>
-                    )}
+                <div className="col-12 col-lg-4">
+                    <select
+                        value={selectedCategory}
+                        onChange={(e) => setSelectedCategory(e.target.value)}
+                        style={inputStyle}
+                        className="form-select"
+                    >
+                        <option value="Todos">Todas las Categorías</option>
+                        {allCategories.map(category => (
+                            <option key={category} value={category}>{category}</option>
+                        ))}
+                    </select>
                 </div>
             </div>
+
+
+            {filteredProducts.length === 0 ? (
+                <p style={{textAlign: 'center', color: neonGreen, fontSize: '1.2em'}}>
+                    No se encontraron productos que coincidan con los filtros.
+                </p>
+            ) : (
+                <div className="row justify-content-center g-4">
+                    {filteredProducts.map((producto) => (
+                        <div key={producto.codigo} className="col-12 col-md-6 col-lg-4 col-xl-3 d-flex justify-content-center">
+                            <ProductCard 
+                                producto={producto} 
+                                onAddToCart={onAddToCart} 
+                            />
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
-    </div>
-  );
+    );
 };
 
-export default PagCarrito;
+export default PagCatalogo;

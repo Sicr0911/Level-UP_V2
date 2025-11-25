@@ -1,6 +1,7 @@
 import type { Producto } from '../Interfaces/Producto';
 import audifonos from '../IMG/Audifonos.png';
 import catan from '../IMG/juegoCatan.png';
+import carcassonne from '../IMG/juegoCarcassonne.png';
 import silla from '../IMG/silla_gamer.png';
 import polera from '../IMG/polera.png';
 import mandoXbox from '../IMG/mandoXbox.png';
@@ -33,7 +34,7 @@ const initialProducts = [
     nombre: 'Carcassonne',
     precio: 24990,
     descripcion : 'Un juego de colocación de fichas donde los jugadores construyen el paisaje alrededor de la fortaleza medieval de Carcassonne. Ideal para 2-5 jugadores y fácil de aprender.',
-    imagen: catan 
+    imagen: carcassonne
   },
   {
     codigo: 'AC001',

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import AdminLayout, { type AdminView } from '../Components/AdminLayout';
+import AdminLayout, { type AdminView } from '../../Components/AdminLayout';
 import PagAdminProductosList from './AdminProductosList'; 
 import PagAdminProductosCRUD from './AdminProductosCRUD'; 
 import PagAdminDashboard from './AdminDashboard'; 

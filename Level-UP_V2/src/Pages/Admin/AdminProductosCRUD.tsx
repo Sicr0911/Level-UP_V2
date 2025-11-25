@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import type { Producto } from '../Interfaces/Producto';
-import { createProduct, updateProduct, getProductByCode, getAllProducts } from '../Data/Productos';
-import AlertMessage from '../Components/AlertMessage';
-import type { AdminView } from '../Components/AdminLayout';
+import type { Producto } from '../../Interfaces/Producto';
+import { createProduct, updateProduct, getProductByCode, getAllProducts } from '../../Data/Productos';
+import AlertMessage from '../../Components/AlertMessage';
+import type { AdminView } from '../../Components/AdminLayout';
 
 interface PagAdminProductosCRUDProps {
     type: 'nuevo' | 'editar';

@@ -6,7 +6,8 @@ import PagPerfil from './Pages/PagPerfil';
 import PagHome from './Pages/PagHome'; 
 import PagCheckout from './Pages/PagCheckout'; 
 import PagAdmin from './Pages/Admin/Admin';
-import PagDetalleProducto from './Pages/Admin/AdminProductosList';
+import ProductDetailCard from './Components/ProductDetailCard'; //
+import { getProductByCode } from './Data/Productos'; //
 import type { Producto } from './Interfaces/Producto';
 import type { Item } from './Interfaces/ItemCarrito'; 
 import type { Usuario } from './Interfaces/Usuario';
@@ -133,8 +134,13 @@ function App() {
       case 'perfil':
         return <PagPerfil user={currentUser} onUpdate={handleUpdateProfile} />;
       case 'detalleProducto':
+             // Lógica CORREGIDA para detalle de producto
         if (selectedProductCode) {
-          return <PagDetalleProducto productoCodigo={selectedProductCode} onAddToCart={handleAddToCart} />;
+          const producto = getProductByCode(selectedProductCode);
+          if (producto) {
+                // Se usa el componente ProductDetailCard para mostrar los detalles del producto
+            return <ProductDetailCard producto={producto} onAddToCart={handleAddToCart} />;
+          }
         }
         return <PagCatalogo onAddToCart={(p) => handleAddToCart(p, 1)} />;
       case 'catalogo':
@@ -142,7 +148,6 @@ function App() {
 
       case 'adminPanel':
         return isAdmin ? <PagAdmin /> : <PagCatalogo onAddToCart={(p) => handleAddToCart(p, 1)} />;
-      case 'catalogo':
       default:
         return <PagCatalogo onAddToCart={(p) => handleAddToCart(p, 1)} />;
     }

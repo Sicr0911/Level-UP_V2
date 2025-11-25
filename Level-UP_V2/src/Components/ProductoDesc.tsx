@@ -1,12 +1,18 @@
 import React from 'react';
 import type { Producto } from '../Interfaces/Producto';
 
+const primaryColor = '#000000';
+const accentBlue = '#1E90FF';
+const neonGreen = '#39FF14';
+const mainText = '#FFFFFF';
+const secondaryText = '#D3D3D3';
+
 interface ProductCardProps {
   producto: Producto;
   onAddToCart: (producto: Producto) => void;
 }
 
-const descripcionProducto: React.FC<ProductCardProps> = ({ producto, onAddToCart }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ producto, onAddToCart }) => {
 
   const formatPrice = (price: number) => {
     return price.toLocaleString('es-CL', {
@@ -61,13 +67,7 @@ const descripcionProducto: React.FC<ProductCardProps> = ({ producto, onAddToCart
   );
 };
 
-export default descripcionProducto;
-
-const primaryColor = '#000000';
-const accentBlue = '#1E90FF';
-const neonGreen = '#39FF14';
-const mainText = '#FFFFFF';
-const secondaryText = '#D3D3D3';
+export default ProductCard;
 
 const cardStyle: React.CSSProperties = {
   backgroundColor: primaryColor,

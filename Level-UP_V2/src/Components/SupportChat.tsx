@@ -24,17 +24,13 @@ const floatingButtonStyle: React.CSSProperties = {
 };
 
 const SupportChat: React.FC = () => {
-  const numero = '56974635012'
-  const whatsappNumber = '56929592300';
+  const whatsappNumber = '56974635012'; 
   const message = encodeURIComponent('Hola Level-Up Gamer, necesito soporte técnico. Mi consulta es sobre...');
 
   const whatsappLink = `https://wa.me/${whatsappNumber}?text=${message}`;
-  const whatsappLink2 = `https://wa.me/${numero}?text=${message}`;
-
 
   const handleClick = () => {
     window.open(whatsappLink, '_blank');
-    window.open(whatsappLink2, '_blank');
   };
 
   return (

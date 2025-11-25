@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import ProductCard from '../Components/ProductoDesc'; 
-import { PRODUCTOS } from '../Data/Productos';
+import { getAllProducts } from '../Data/Productos';
 import type { Producto } from '../Interfaces/Producto';
 
 interface PagCatalogoProps {
@@ -13,7 +13,8 @@ const neonGreen = '#39FF14';
 const mainText = '#FFFFFF';
 const headerFont = 'Orbitron, sans-serif';
 
-const allCategories = [...new Set(PRODUCTOS.map(p => p.categoria))];
+const allProducts = getAllProducts();
+const allCategories = [...new Set(allProducts.map(p => p.categoria))];
 
 const PagCatalogo: React.FC<PagCatalogoProps> = ({ onAddToCart }) => {
     
@@ -21,7 +22,7 @@ const PagCatalogo: React.FC<PagCatalogoProps> = ({ onAddToCart }) => {
     const [selectedCategory, setSelectedCategory] = useState('Todos');
 
     const filteredProducts = useMemo(() => {
-        let tempProducts = PRODUCTOS;
+        let tempProducts = allProducts;
 
         if (selectedCategory !== 'Todos') {
             tempProducts = tempProducts.filter(p => p.categoria === selectedCategory);

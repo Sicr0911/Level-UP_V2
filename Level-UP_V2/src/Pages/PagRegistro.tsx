@@ -38,7 +38,7 @@ const PagRegistro: React.FC = () => {
     const nacimiento = new Date(fechaNacimiento);
     const edad = hoy.getFullYear() - nacimiento.getFullYear();
     const mes = hoy.getMonth() - nacimiento.getMonth();
-    const dia = hoy.getDate() - nacimiento.getMonth();
+    const dia = hoy.getDate() - nacimiento.getDate();
     const EsMayorEdad = edad > 18 || (edad === 18 && (mes > 0 || (mes === 0 && dia >= 0)));
 
     if (!EsMayorEdad) {

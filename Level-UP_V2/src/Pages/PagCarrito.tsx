@@ -1,118 +1,123 @@
-import React, { useState, useMemo } from 'react';
-import ProductCard from '../Components/ProductoDesc'; 
-import { getAllProducts } from '../Data/Productos'; 
-import type { Producto } from '../Interfaces/Producto';
+import React, { useMemo } from 'react';
+import type { Item } from '../Interfaces/ItemCarrito';
+import AlertMessage from '../Components/AlertMessage';
 
-interface PagCatalogoProps {
-    onAddToCart: (producto: Producto) => void; 
+interface PagCarritoProps {
+    items: Item[];
+    onCheckout: () => void;
 }
 
 const primaryColor = '#000000';
 const accentBlue = '#1E90FF';
 const neonGreen = '#39FF14';
 const mainText = '#FFFFFF';
+const secondaryText = '#D3D3D3';
 const headerFont = 'Orbitron, sans-serif';
 
-const allProducts = getAllProducts(); 
-const allCategories = [...new Set(allProducts.map(p => p.categoria))];
+const formatPrice = (price: number) => {
+    return price.toLocaleString('es-CL', {
+      style: 'currency',
+      currency: 'CLP',
+      minimumFractionDigits: 0,
+    });
+};
 
-const PagCatalogo: React.FC<PagCatalogoProps> = ({ onAddToCart }) => {
+const PagCarrito: React.FC<PagCarritoProps> = ({ items, onCheckout }) => {
     
-    const [searchTerm, setSearchTerm] = useState('');
-    const [selectedCategory, setSelectedCategory] = useState('Todos');
-
-    const filteredProducts = useMemo(() => {
-        let tempProducts = allProducts;
-
-        if (selectedCategory !== 'Todos') {
-            tempProducts = tempProducts.filter(p => p.categoria === selectedCategory);
-        }
-
-        if (searchTerm) {
-            const lowerCaseSearch = searchTerm.toLowerCase();
-            tempProducts = tempProducts.filter(p => 
-                p.nombre.toLowerCase().includes(lowerCaseSearch) ||
-                p.descripcion.toLowerCase().includes(lowerCaseSearch)
-            );
-        }
-
-        return tempProducts;
-    }, [searchTerm, selectedCategory]);
+    const subtotal = useMemo(() => {
+        return items.reduce((acc, item) => acc + (item.producto.precio * item.cantidad), 0);
+    }, [items]);
 
     const pageStyle: React.CSSProperties = {
         backgroundColor: primaryColor,
         minHeight: '100vh',
         color: mainText,
     };
-
-    const headerStyle: React.CSSProperties = {
-        textAlign: 'center',
-        fontFamily: headerFont,
-        color: accentBlue,
-    };
-
-    const filterContainerStyle: React.CSSProperties = {
+    
+    const cardStyle: React.CSSProperties = {
         backgroundColor: '#111',
-        border: `1px solid ${accentBlue}`,
-    };
-
-    const inputStyle: React.CSSProperties = {
-        backgroundColor: '#333',
+        border: `3px solid ${accentBlue}`,
         color: mainText,
-        border: `1px solid ${accentBlue}`,
+        borderRadius: '10px',
+        padding: '20px',
+        marginBottom: '20px'
     };
     
-    return (
-        <div style={pageStyle} className="container-fluid p-4">
-            <h2 style={headerStyle} className="mb-4">🎮 Catálogo de Productos Level-Up Gamer 🎮</h2>
+    const checkoutButtonStyle: React.CSSProperties = {
+        backgroundColor: neonGreen,
+        color: primaryColor,
+        fontWeight: 'bold',
+        border: 'none',
+    };
 
-            <div className="row justify-content-center g-3 p-3 rounded-3 mb-4" style={filterContainerStyle}>
-                
-                <div className="col-12 col-lg-5">
-                    <input
-                        type="text"
-                        placeholder="Buscar por nombre o descripción..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        style={inputStyle}
-                        className="form-control"
-                    />
-                </div>
-
-                <div className="col-12 col-lg-4">
-                    <select
-                        value={selectedCategory}
-                        onChange={(e) => setSelectedCategory(e.target.value)}
-                        style={inputStyle}
-                        className="form-select"
-                    >
-                        <option value="Todos">Todas las Categorías</option>
-                        {allCategories.map(category => (
-                            <option key={category} value={category}>{category}</option>
-                        ))}
-                    </select>
-                </div>
+    if (items.length === 0) {
+        return (
+            <div style={pageStyle} className="container p-4 text-center">
+                <h2 style={{ color: accentBlue, fontFamily: headerFont }} className="mb-4">🛒 Tu Carrito</h2>
+                <AlertMessage 
+                    type="info" 
+                    message="Tu carrito está vacío. ¡Es hora de subir de nivel tus compras!"
+                />
+                <button 
+                    className="btn btn-lg mt-4"
+                    style={{ backgroundColor: accentBlue, color: mainText }}
+                    onClick={() => console.log('Simular navegación a catálogo')} 
+                >
+                    Volver al Catálogo
+                </button>
             </div>
+        );
+    }
 
+    return (
+        <div style={pageStyle} className="container p-4">
+            <h2 style={{ color: accentBlue, fontFamily: headerFont, textAlign: 'center' }} className="mb-4">🛒 Mi Carrito Level-Up</h2>
 
-            {filteredProducts.length === 0 ? (
-                <p style={{textAlign: 'center', color: neonGreen, fontSize: '1.2em'}}>
-                    No se encontraron productos que coincidan con los filtros.
-                </p>
-            ) : (
-                <div className="row justify-content-center g-4">
-                    {filteredProducts.map((producto) => (
-                        <div key={producto.codigo} className="col-12 col-md-6 col-lg-4 col-xl-3 d-flex justify-content-center">
-                            <ProductCard 
-                                producto={producto} 
-                                onAddToCart={onAddToCart} 
-                            />
+            <div className="row justify-content-center">
+                <div className="col-12 col-lg-8">
+                    
+                    {items.map((item, index) => (
+                        <div key={index} style={cardStyle} className="d-flex justify-content-between align-items-center">
+                            <div className="d-flex align-items-center">
+                                <div style={{width: '60px', height: '60px', marginRight: '15px', backgroundColor: '#333', borderRadius: '5px', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                                    <span style={{fontSize: '2em'}}>{item.producto.categoria === 'Consolas' ? '🎮' : '📦'}</span>
+                                </div>
+                                <div>
+                                    <h5 style={{ color: neonGreen, fontFamily: headerFont }} className="mb-1">{item.producto.nombre}</h5>
+                                    <p className="mb-0" style={{ fontWeight: 'bold' }}>
+                                        Cantidad: x{item.cantidad}
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="text-end">
+                                <p className="mb-1" style={{ color: secondaryText, fontSize: '0.9em' }}>
+                                    {formatPrice(item.producto.precio)} c/u
+                                </p>
+                                <span className="fs-5" style={{ color: accentBlue, fontWeight: 'bold' }}>
+                                    {formatPrice(item.producto.precio * item.cantidad)}
+                                </span>
+                            </div>
                         </div>
                     ))}
+
+                    <div className="text-end mt-4 p-3" style={{ borderTop: `2px dashed ${neonGreen}` }}>
+                        <h4 className="mb-0">
+                            Total a Pagar: <span style={{ color: neonGreen }}>{formatPrice(subtotal)} CLP</span>
+                        </h4>
+                    </div>
+                    
+                    <button 
+                        onClick={onCheckout} 
+                        style={checkoutButtonStyle} 
+                        className="btn btn-lg w-100 mt-3"
+                        disabled={subtotal === 0}
+                    >
+                        Finalizar Compra
+                    </button>
                 </div>
-            )}
+            </div>
         </div>
     );
 };
 
-export default PagCatalogo;
+export default PagCarrito;

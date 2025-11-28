@@ -1,15 +1,4 @@
 import type { Producto } from '../Interfaces/Producto';
-import audifonos from '../IMG/Audifonos.png';
-import catan from '../IMG/juegoCatan.png';
-import carcassonne from '../IMG/juegoCarcassonne.png';
-import silla from '../IMG/silla_gamer.png';
-import polera from '../IMG/polera.png';
-import mandoXbox from '../IMG/mandoXbox.png';
-import mouse from '../IMG/mouse.png';
-import mousepad from '../IMG/mousepad.png';
-import pc from '../IMG/pc.png';
-import ps5 from '../IMG/ps5.png';
-
 
 const initialProducts = [
   {
@@ -18,7 +7,7 @@ const initialProducts = [
     nombre: 'Catan',
     precio: 29990,
     descripcion: 'Un clásico juego de estrategia donde los jugadores compiten por colonizar y expandirse en la isla de Catan. Ideal para 3-4 jugadores y perfecto para noches de juego en familia o con amigos.',
-    imagen: catan
+    imagen: '/IMG/juegoCatan.png'
   },
   {
     codigo: 'AU001',
@@ -26,7 +15,7 @@ const initialProducts = [
     nombre: 'Auriculares Gamer HyperX Cloud II',
     precio: 79990,
     descripcion : 'Proporcionan un sonido envolvente de calidad con un micrófono desmontable y almohadillas de espuma viscoelástica para mayor comodidad durante largas sesiones de juego.',
-    imagen: audifonos
+    imagen: '/IMG/audifonos.png'
   },
   {
     codigo: 'JM002',
@@ -34,7 +23,7 @@ const initialProducts = [
     nombre: 'Carcassonne',
     precio: 24990,
     descripcion : 'Un juego de colocación de fichas donde los jugadores construyen el paisaje alrededor de la fortaleza medieval de Carcassonne. Ideal para 2-5 jugadores y fácil de aprender.',
-    imagen: carcassonne
+    imagen: '/IMG/juegoCarcassonne.png'
   },
   {
     codigo: 'AC001',
@@ -42,7 +31,7 @@ const initialProducts = [
     nombre: 'Controlador Inalámbrico Xbox Series X',
     precio: 59990,
     descripcion: 'Ofrece una experiencia de juego cómoda con botones mapeables y una respuesta táctil mejorada. Compatible con consolas Xbox y PC.',
-    imagen: mandoXbox
+    imagen: '/IMG/mandoXbox.png'
   },
   {
     codigo: 'CO001',
@@ -50,7 +39,7 @@ const initialProducts = [
     nombre: 'PlayStation 5',
     precio: 549990,
     descripcion: 'La consola de última generación de Sony, que ofrece gráficos impresionantes y tiempos de carga ultrarrápidos para una experiencia de juego inmersiva.',
-    imagen: ps5
+    imagen: '/IMG/ps5.png'
   },
   {
     codigo: 'CG001',
@@ -58,7 +47,7 @@ const initialProducts = [
     nombre: 'PC Gamer ASUS ROG Strix',
     precio: 1299990,
     descripcion: 'Un potente equipo diseñado para los gamers más exigentes, equipado con los últimos componentes para ofrecer un rendimiento excepcional en cualquier juego.',
-    imagen: pc
+    imagen: '/IMG/pc.png'
   },
   {
     codigo: 'SG001',
@@ -66,7 +55,7 @@ const initialProducts = [
     nombre: 'Silla Gamer Secretlab Titan',
     precio: 349990,
     descripcion: 'Diseñada para el máximo confort, esta silla ofrece un soporte ergonómico y personalización ajustable para sesiones de juego prolongadas.',
-    imagen: silla
+    imagen: '/IMG/silla_gamer.png'
   },
   {
     codigo: 'PP001',
@@ -74,7 +63,7 @@ const initialProducts = [
     nombre: "Polera Gamer Personalizada 'Level-Up'",
     precio: 14990,
     descripcion: 'Una camiseta cómoda y estilizada, con la posibilidad de personalizarla con tu gamer tag o diseño favorito.',
-    imagen: polera
+    imagen: '/IMG/polera.png'
   },
   {
     codigo: 'MO001',
@@ -82,7 +71,7 @@ const initialProducts = [
     nombre: "Mouse Gamer Logitech G502 HERO",
     precio: 49990,
     descripcion: 'Con sensor de alta precisión y botones personalizables, este mouse es ideal para gamers que buscan un control preciso y personalización.',
-    imagen: mouse
+    imagen: '/IMG/mouse.png'
   },
   {
     codigo: 'MO002',
@@ -90,7 +79,7 @@ const initialProducts = [
     nombre: "Mousepad Razer Goliathus Extended",
     precio: 29990,
     descripcion: 'Ofrece un área de juego amplia con iluminación RGB personalizable, asegurando una superficie suave y uniforme para el movimiento del mouse.',
-    imagen: mousepad
+    imagen: '/IMG/mousepad.png'
   }
 ];
 

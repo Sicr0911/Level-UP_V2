@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import ProductCard from '../Components/ProductoDesc'; 
-import { getAllProducts } from '../Data/Productos';
+import { fetchAllProducts } from '../services/ProductoAPIService'; 
 import type { Producto } from '../Interfaces/Producto';
 
 interface PagCatalogoProps {
@@ -13,16 +13,30 @@ const neonGreen = '#39FF14';
 const mainText = '#FFFFFF';
 const headerFont = 'Orbitron, sans-serif';
 
-const allProducts = getAllProducts();
-const allCategories = [...new Set(allProducts.map(p => p.categoria))];
-
 const PagCatalogo: React.FC<PagCatalogoProps> = ({ onAddToCart }) => {
+    
+    const [products, setProducts] = useState<Producto[]>([]);
+    const [loading, setLoading] = useState(true);
     
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('Todos');
+    
+    useEffect(() => {
+        const loadProducts = async () => {
+            setLoading(true);
+            const fetchedProducts = await fetchAllProducts();
+            setProducts(fetchedProducts);
+            setLoading(false);
+        };
+        loadProducts();
+    }, []); 
+
+    const allCategories = useMemo(() => {
+        return ['Todos', ...new Set(products.map(p => p.categoria))];
+    }, [products]);
 
     const filteredProducts = useMemo(() => {
-        let tempProducts = allProducts;
+        let tempProducts = products;
 
         if (selectedCategory !== 'Todos') {
             tempProducts = tempProducts.filter(p => p.categoria === selectedCategory);
@@ -37,7 +51,7 @@ const PagCatalogo: React.FC<PagCatalogoProps> = ({ onAddToCart }) => {
         }
 
         return tempProducts;
-    }, [searchTerm, selectedCategory]);
+    }, [searchTerm, selectedCategory, products]);
 
     const pageStyle: React.CSSProperties = {
         backgroundColor: primaryColor,
@@ -61,6 +75,14 @@ const PagCatalogo: React.FC<PagCatalogoProps> = ({ onAddToCart }) => {
         color: mainText,
         border: `1px solid ${accentBlue}`,
     };
+    
+    if (loading) {
+        return (
+             <div className="container-fluid p-4 text-center">
+                 <h2 style={{ color: neonGreen, fontFamily: headerFont }}>Cargando datos del Backend... 🚀</h2>
+             </div>
+        );
+    }
     
     return (
         <div style={pageStyle} className="container-fluid p-4">
@@ -94,10 +116,9 @@ const PagCatalogo: React.FC<PagCatalogoProps> = ({ onAddToCart }) => {
                 </div>
             </div>
 
-
             {filteredProducts.length === 0 ? (
                 <p style={{textAlign: 'center', color: neonGreen, fontSize: '1.2em'}}>
-                    No se encontraron productos que coincidan con los filtros.
+                    {products.length === 0 ? "No hay productos disponibles en el catálogo." : "No se encontraron productos que coincidan con los filtros."}
                 </p>
             ) : (
                 <div className="row justify-content-center g-4">

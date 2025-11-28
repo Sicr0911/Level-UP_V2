@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { Usuario } from '../Interfaces/Usuario'; 
 import AlertMessage from '../Components/AlertMessage';
+import { validateRegistration } from '../Utils/validations';
 
 const primaryColor = '#000000';
 const accentBlue = '#1E90FF';
@@ -34,19 +35,12 @@ const PagRegistro: React.FC = () => {
     setError('');
     setMensajeExito('');
 
-    const hoy = new Date();
-    const nacimiento = new Date(fechaNacimiento);
-    const edad = hoy.getFullYear() - nacimiento.getFullYear();
-    const mes = hoy.getMonth() - nacimiento.getMonth();
-    const dia = hoy.getDate() - nacimiento.getDate();
-    const EsMayorEdad = edad > 18 || (edad === 18 && (mes > 0 || (mes === 0 && dia >= 0)));
+    const { EsMayorEdad, EsDuoc, error: validationError } = validateRegistration(fechaNacimiento, email);
 
     if (!EsMayorEdad) {
-      setError('❌ Debes ser mayor de 18 años para registrarte en Level-Up Gamer.');
+      setError(validationError);
       return;
     }
-
-    const EsDuoc = email.endsWith('@duoc.cl') || email.endsWith('@alumnos.duoc.cl');
     
     let puntosIniciales = 0;
     if (codigoReferido) {

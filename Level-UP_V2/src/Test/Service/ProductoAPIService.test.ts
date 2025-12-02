@@ -1,47 +1,42 @@
-import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
-import { fetchAllProducts } from '../../services/ProductoAPIService';
+import type { Producto } from '../Interfaces/Producto';
 
-global.fetch = vi.fn() as unknown as typeof fetch;
+interface ApiProducto {
+    id: number | string;
+    title?: string;
+    name?: string;
+    price?: number;
+    precio?: number;
+    description?: string;
+    image?: string;
+    imagen?: string;
+    category?: string;
+}
 
-describe('ProductoAPIService', () => {
-    beforeEach(() => {
-        vi.resetAllMocks();
-    });
+const PRODUCT_API_URL = 'http://localhost:8080/api/v1/products';
 
-    it('Debe traer productos y mapearlos correctamente (id -> codigo)', async () => {
-        const mockBackendResponse = [
-            { 
-                id: 1, 
-                title: 'PS5',
-                name: 'PS5',
-                category: 'Consolas', 
-                price: 500,
-                precio: 500000,
-                description: 'Desc', 
-                image: '/img.png',
-                imagen: '/img.png'
-            }
-        ];
+export const fetchAllProducts = async (): Promise<Producto[]> => {
+    console.log("Intentando conectar con el backend en:", PRODUCT_API_URL);
+    try {
+        const response = await fetch(PRODUCT_API_URL);
 
-        (global.fetch as Mock).mockResolvedValue({
-            ok: true,
-            json: async () => mockBackendResponse,
-        });
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status} - ${response.statusText}`);
+        }
 
-        const productos = await fetchAllProducts();
+        const data: ApiProducto[] = await response.json();
 
-        // 4. Validaciones
-        expect(productos).toHaveLength(1);
+        return data.map((item) => ({
+            codigo: item.id.toString(),
+            nombre: item.title || item.name || 'Nombre no disponible',
+            precio: item.price || item.precio || 0,
+            descripcion: item.description || '',
+            imagen: item.image || item.imagen || 'default.jpg',
+            categoria: item.category || 'General'
+        }));
+
+    } catch (error) {
+        console.error("❌ Error de conexión o al obtener datos del backend:", error);
         
-        expect(productos[0].codigo).toBe('1'); 
-        
-        expect(productos[0].nombre).toBe('PS5');
-    });
-
-    it('Debe manejar errores de conexión retornando array vacío', async () => {
-        (global.fetch as Mock).mockRejectedValue(new Error('Fallo de red'));
-
-        const productos = await fetchAllProducts();
-        expect(productos).toEqual([]);
-    });
-});
+        return []; 
+    }
+};

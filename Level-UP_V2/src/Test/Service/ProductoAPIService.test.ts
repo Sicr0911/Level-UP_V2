@@ -1,4 +1,4 @@
-import type { Producto } from '../Interfaces/Producto';
+import type { Producto } from '../../Interfaces/Producto';
 
 interface ApiProducto {
     id: number | string;

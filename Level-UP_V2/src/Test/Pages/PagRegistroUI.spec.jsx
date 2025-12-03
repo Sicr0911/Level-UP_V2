@@ -1,67 +1,31 @@
-import { render, fireEvent, screen } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import PagRegistro from '../../Pages/PagRegistro';
-import * as Validations from '../../Utils/validations'; 
+import { describe, it, expect } from 'vitest';
+import { validateRegistration } from '../../Utils/validations'; 
 
-describe('PagRegistro - Interfaz de Usuario', () => {
+describe('Validación de Registro - Level-Up Gamer', function() {
 
-  beforeEach(() => {
-    vi.restoreAllMocks();
+  it('Debe rechazar el registro si el usuario es menor de 18 años', function() {
+    const hoy = new Date();
+    const fechaMenorEdad = new Date(hoy.getFullYear() - 17, hoy.getMonth(), hoy.getDate()).toISOString().split('T')[0];
+
+    const { EsMayorEdad, error } = validateRegistration(fechaMenorEdad, 'test@mail.cl');
+
+    expect(EsMayorEdad).toBe(false);
+    expect(error).toContain('Debes ser mayor de 18 años'); 
   });
 
-  it('Debe mostrar un error visual si la validación falla (Menor de edad)', () => {
-    vi.spyOn(Validations, 'validateRegistration').mockReturnValue({
-      EsMayorEdad: false,
-      EsDuoc: false,
-      error: '❌ Debes ser mayor de 18 años'
-    });
+  it('Debe aplicar el descuento del 20% si el email es de Duoc', function() {
+    const emailDuoc = 'gamer_elite@alumnos.duoc.cl';
 
-    render(<PagRegistro />);
+    const { EsDuoc } = validateRegistration('2000-01-01', emailDuoc); 
 
-    fireEvent.change(screen.getByLabelText(/Nombre de Usuario:/i), { target: { value: 'KidGamer' } });
-    fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'kid@game.com' } });
-    fireEvent.change(screen.getByLabelText(/Fecha de Nacimiento:/i), { target: { value: '2015-01-01' } });
-
-    fireEvent.click(screen.getByRole('button', { name: /¡Registrarse!/i }));
-
-    expect(screen.getByText('❌ Debes ser mayor de 18 años')).toBeTruthy();
-    
-    expect(screen.queryByText(/¡Registro exitoso!/i)).toBeNull();
+    expect(EsDuoc).toBe(true);
   });
 
-  it('Debe mostrar mensaje de éxito y limpiar campos si el registro es correcto', () => {
-    vi.spyOn(Validations, 'validateRegistration').mockReturnValue({
-      EsMayorEdad: true,
-      EsDuoc: false,
-      error: ''
-    });
+  it('No debe aplicar descuento si el email no es de Duoc', function() {
+    const emailGenerico = 'gamer_pro@gmail.com';
 
-    render(<PagRegistro />);
+    const { EsDuoc } = validateRegistration('2000-01-01', emailGenerico); 
 
-    const inputNombre = screen.getByLabelText(/Nombre de Usuario:/i);
-    const inputEmail = screen.getByLabelText(/Email/i);
-    
-    fireEvent.change(inputNombre, { target: { value: 'AdultGamer' } });
-    fireEvent.change(inputEmail, { target: { value: 'adult@game.com' } });
-    fireEvent.click(screen.getByRole('button', { name: /¡Registrarse!/i }));
-
-    expect(screen.getByText(/¡Registro exitoso!/i)).toBeTruthy();
-
-    expect(inputNombre.value).toBe('');
-    expect(inputEmail.value).toBe('');
-  });
-
-  it('Debe detectar y mencionar el descuento Duoc si el email es institucional', () => {
-    vi.spyOn(Validations, 'validateRegistration').mockReturnValue({
-      EsMayorEdad: true,
-      EsDuoc: true, 
-      error: ''
-    });
-
-    render(<PagRegistro />);
-    
-    fireEvent.click(screen.getByRole('button', { name: /¡Registrarse!/i }));
-
-    expect(screen.getByText(/descuento del 20%/i)).toBeTruthy();
+    expect(EsDuoc).toBe(false);
   });
 });

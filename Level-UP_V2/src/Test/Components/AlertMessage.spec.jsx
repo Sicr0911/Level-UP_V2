@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import AlertMessage from '../../Components/AlertMessage';
 
-describe('AlertMessage - Feedback Visual', () => {});
+describe('AlertMessage - Feedback Visual', () => {
 
   it('Debe renderizar el mensaje de éxito con el icono y color correctos', () => {
     render(<AlertMessage type="success" message="Operación exitosa" />);
@@ -25,5 +25,6 @@ describe('AlertMessage - Feedback Visual', () => {});
     expect(screen.getByText('Algo salió mal')).toBeTruthy();
     expect(screen.getByText('❌')).toBeTruthy();
     
-    expect(alertNode.style.borderColor).toBe('#FF5733'); 
+    expect(alertNode.style.borderColor).toBe('rgb(255, 87, 51)'); 
+  });
 });

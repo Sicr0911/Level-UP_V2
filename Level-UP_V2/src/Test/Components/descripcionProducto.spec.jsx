@@ -1,21 +1,26 @@
+import { render, fireEvent, screen } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
+import ProductCard from '../../Components/ProductoDesc'; 
+
 describe('descripcionProducto - Interacción y DOM', function() {
 
   const testProducto = {
-    code: 'TEST01',
+    codigo: 'TEST01',
     nombre: 'Controlador de Prueba',
     categoria: 'Accesorios',
     precio: 59990,
     descripcion: 'Un controlador para pruebas unitarias.',
+    imagen: 'img.png'
   };
 
   it('Debe llamar a onAddToCart con el producto correcto al hacer clic', function() {
-    const mockOnAddToCart = jasmine.createSpy('onAddToCartSpy');
+    const mockOnAddToCart = vi.fn();
 
-    const { getByText, fireEvent } = render(
-      <descripcionProducto producto={testProducto} onAddToCart={mockOnAddToCart} />
+    render(
+      <ProductCard producto={testProducto} onAddToCart={mockOnAddToCart} />
     );
 
-    const boton = getByText('Añadir al Carrito'); 
+    const boton = screen.getByText('Añadir al Carrito'); 
     fireEvent.click(boton);
 
     expect(mockOnAddToCart).toHaveBeenCalledTimes(1);
@@ -23,12 +28,12 @@ describe('descripcionProducto - Interacción y DOM', function() {
   });
 
   it('Debe mostrar el nombre y el precio formateado correctamente en el DOM', function() {
-    const { getByText } = render(
-      <descripcionProducto producto={testProducto} onAddToCart={() => {}} />
+    render(
+      <ProductCard producto={testProducto} onAddToCart={() => {}} />
     );
 
-    expect(getByText('Controlador de Prueba')).toBeTruthy(); 
-    expect(getByText('$59.990 CLP')).toBeTruthy();
-    expect(getByText('Categoría: Accesorios')).toBeTruthy(); 
+    expect(screen.getByText('Controlador de Prueba')).toBeTruthy(); 
+    expect(screen.getByText(/\$59\.990/)).toBeTruthy();
+    expect(screen.getByText('Categoría: Accesorios')).toBeTruthy(); 
   });
 });

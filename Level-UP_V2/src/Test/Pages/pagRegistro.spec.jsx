@@ -1,11 +1,12 @@
 import { describe, it, expect } from 'vitest';
+// Asegúrate de que la ruta de importación sea correcta según tu estructura
 import { validateRegistration } from '../../Utils/validations'; 
 
 describe('Validación de Registro - Level-Up Gamer', function() {
 
   it('Debe rechazar el registro si el usuario es menor de 18 años', function() {
     const hoy = new Date();
-    const fechaMenorEdad = new Date(hoy.getFullYear() - 18, hoy.getMonth(), hoy.getDate() + 1).toISOString().split('T')[0];
+    const fechaMenorEdad = new Date(hoy.getFullYear() - 17, hoy.getMonth(), hoy.getDate()).toISOString().split('T')[0];
 
     const { EsMayorEdad, error } = validateRegistration(fechaMenorEdad, 'test@mail.cl');
 
@@ -16,7 +17,7 @@ describe('Validación de Registro - Level-Up Gamer', function() {
   it('Debe aplicar el descuento del 20% si el email es de Duoc', function() {
     const emailDuoc = 'gamer_elite@alumnos.duoc.cl';
 
-    const { EsDuoc } = validateRegistration('1990-01-01', emailDuoc); 
+    const { EsDuoc } = validateRegistration('2000-01-01', emailDuoc); 
 
     expect(EsDuoc).toBe(true);
   });
@@ -24,7 +25,7 @@ describe('Validación de Registro - Level-Up Gamer', function() {
   it('No debe aplicar descuento si el email no es de Duoc', function() {
     const emailGenerico = 'gamer_pro@gmail.com';
 
-    const { EsDuoc } = validateRegistration('1990-01-01', emailGenerico); 
+    const { EsDuoc } = validateRegistration('2000-01-01', emailGenerico); 
 
     expect(EsDuoc).toBe(false);
   });

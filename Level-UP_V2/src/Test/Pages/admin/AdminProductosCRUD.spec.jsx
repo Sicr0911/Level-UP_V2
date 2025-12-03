@@ -1,7 +1,7 @@
-import { render, fireEvent, screen, waitFor } from '@testing-library/react';
+import { render, fireEvent, screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import PagAdminProductosCRUD from '../../Pages/Admin/AdminProductosCRUD';
-import * as ProductosData from '../../Data/Productos';
+import PagAdminProductosCRUD from '../../../Pages/Admin/AdminProductosCRUD';
+import * as ProductosData from '../../../Data/Productos'; 
 
 describe('AdminProductosCRUD - Gestión de Inventario', () => {
 
@@ -35,6 +35,7 @@ describe('AdminProductosCRUD - Gestión de Inventario', () => {
     fireEvent.click(screen.getByText('Crear Producto'));
 
     expect(createSpy).toHaveBeenCalledTimes(1);
+    
     expect(createSpy).toHaveBeenCalledWith(expect.objectContaining({
       nombre: 'Nuevo Mouse',
       precio: 15000,

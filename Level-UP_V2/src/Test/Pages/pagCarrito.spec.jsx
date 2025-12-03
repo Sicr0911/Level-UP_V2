@@ -44,7 +44,6 @@ describe('PagCarrito - Lógica de Visualización y Cálculo', function() {
     render(<PagCarrito items={itemsMultiples} />);
     const checkoutButton = screen.getByText('Finalizar Compra');
 
-    // RGB de #39FF14
     expect(checkoutButton.style.backgroundColor).toBe('rgb(57, 255, 20)');
   });
 });

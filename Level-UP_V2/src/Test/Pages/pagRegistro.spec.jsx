@@ -1,5 +1,4 @@
 import { describe, it, expect } from 'vitest';
-// Asegúrate de que la ruta de importación sea correcta según tu estructura
 import { validateRegistration } from '../../Utils/validations'; 
 
 describe('Validación de Registro - Level-Up Gamer', function() {

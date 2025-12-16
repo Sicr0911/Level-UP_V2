@@ -1,22 +1,39 @@
 import type { Producto } from '../Interfaces/Producto';
+interface BackendProduct {
+    id: number;
+    name: string;
+    precio: number;
+    descripcion: string;
+    imagen: string;
+    categoria: string;
+    stock: number;
+}
 
 const PRODUCT_API_URL = 'http://localhost:8080/api/v1/products';
 
 export const fetchAllProducts = async (): Promise<Producto[]> => {
-    console.log("Intentando conectar con el backend en:", PRODUCT_API_URL);
+    console.log("📡 Conectando a:", PRODUCT_API_URL);
     try {
         const response = await fetch(PRODUCT_API_URL);
 
         if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status} - ${response.statusText}`);
+            throw new Error(`Error HTTP: ${response.status}`);
         }
 
-        return await response.json();
+        const data: BackendProduct[] = await response.json();
+        
+        return data.map((item) => ({
+            id: item.id,
+            name: item.name,
+            precio: item.precio,
+            descripcion: item.descripcion,
+            imagen: item.imagen || '/img/default.png', 
+            categoria: item.categoria,
+            stock: item.stock
+        }));
 
     } catch (error) {
-        console.error("❌ Error de conexión o al obtener datos del backend:", error);
-
+        console.error("❌ Error al obtener productos:", error);
         return []; 
     }
 };
-

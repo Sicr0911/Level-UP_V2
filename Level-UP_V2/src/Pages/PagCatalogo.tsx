@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { getAllProducts } from '../services/ProductoAPIService';
 import { Producto } from '../Interfaces/Producto';
 
@@ -58,45 +59,25 @@ const PagCatalogo: React.FC<PagCatalogoProps> = ({ onAddToCart }) => {
         {productosFiltrados.map((producto) => (
           <div className="col" key={producto.id}>
             <div className="card h-100 shadow-sm bg-dark text-white border-secondary">
-              <img 
-                src={producto.imagen.startsWith('/') ? producto.imagen : `/IMG/${producto.imagen}`} 
-                className="card-img-top p-3" 
-                alt={producto.name}
-                style={{ height: '250px', objectFit: 'contain' }}
-                onError={(e) => {
-                   (e.target as HTMLImageElement).src = 'https://via.placeholder.com/250?text=No+Image';
-                }}
-              />
+              
+              <Link to={`/producto/${producto.id}`} style={{ cursor: 'pointer' }}>
+                  <img 
+                    src={producto.imagen.startsWith('/') ? producto.imagen : `/IMG/${producto.imagen}`} 
+                    className="card-img-top p-3" 
+                    alt={producto.name}
+                    style={{ height: '250px', objectFit: 'contain', transition: 'transform 0.2s' }}
+                    onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                    onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                    onError={(e) => {
+                       (e.target as HTMLImageElement).src = 'https://via.placeholder.com/250?text=No+Image';
+                    }}
+                  />
+              </Link>
+
               <div className="card-body d-flex flex-column">
-                <h5 className="card-title fw-bold">{producto.name}</h5>
+                <Link to={`/producto/${producto.id}`} className="text-decoration-none text-white">
+                    <h5 className="card-title fw-bold text-hover-primary">{producto.name}</h5>
+                </Link>
+                
                 <p className="card-text text-muted small">{producto.categoria}</p>
                 <p className="card-text flex-grow-1">{producto.descripcion.substring(0, 80)}...</p>
-                
-                <div className="mt-auto">
-                    <div className="d-flex justify-content-between align-items-center mb-3">
-                        <span className="fs-4 fw-bold text-success">
-                            ${producto.precio.toLocaleString('es-CL')}
-                        </span>
-                        <span className={`badge ${producto.stock > 0 ? 'bg-success' : 'bg-danger'}`}>
-                            {producto.stock > 0 ? `Stock: ${producto.stock}` : 'Agotado'}
-                        </span>
-                    </div>
-                    
-                    <button 
-                        className="btn btn-primary w-100 fw-bold"
-                        onClick={() => onAddToCart(producto)}
-                        disabled={producto.stock === 0}
-                    >
-                        {producto.stock > 0 ? '🛒 Añadir al Carrito' : 'Sin Stock'}
-                    </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-export default PagCatalogo;

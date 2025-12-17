@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-
-// Páginas
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min';
 import PagHome from './Pages/PagHome';
 import PagCatalogo from './Pages/PagCatalogo';
 import PagDetalle from './Pages/PagDetalle';
@@ -13,7 +13,6 @@ import PagPerfil from './Pages/PagPerfil';
 import PagBlog from './Pages/PagBlog'; 
 import PagAdmin from './Pages/Admin/Admin';
 
-// Componentes y Servicios
 import Navbar from './Components/NavBar';
 import Footer from './Components/Footer';
 import SupportChat from './Components/SupportChat';
@@ -64,7 +63,6 @@ function App() {
 
   const clearCart = () => setCartItems([]);
 
-  // Lógica de roles
   const isAdmin = user && user.username && (user.username.includes("admin") || user.username.includes("vendedor"));
 
   return (
@@ -74,7 +72,6 @@ function App() {
 
         <main className="flex-grow-1">
           <Routes>
-            {/* Rutas Públicas */}
             <Route path="/" element={<PagHome onAddToCart={handleAddToCart} />} />
             <Route path="/login" element={<PagLogin />} />
             <Route path="/registro" element={<PagRegistro />} />

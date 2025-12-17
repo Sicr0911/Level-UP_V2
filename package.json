@@ -5,5 +5,8 @@
     "@testing-library/user-event": "^14.6.1",
     "jsdom": "^27.2.0",
     "vitest": "^4.0.14"
+  },
+  "dependencies": {
+    "bootstrap": "^5.3.8"
   }
 }

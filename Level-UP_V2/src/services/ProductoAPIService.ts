@@ -1,39 +1,28 @@
-import type { Producto } from '../Interfaces/Producto';
-interface BackendProduct {
-    id: number;
-    name: string;
-    precio: number;
-    descripcion: string;
-    imagen: string;
-    categoria: string;
-    stock: number;
-}
+import axios from 'axios';
+import { authHeader } from './AuthService';
 
-const PRODUCT_API_URL = 'http://localhost:8080/api/v1/products';
+const API_URL = "http://localhost:8080/api/products";
 
-export const fetchAllProducts = async (): Promise<Producto[]> => {
-    console.log("📡 Conectando a:", PRODUCT_API_URL);
-    try {
-        const response = await fetch(PRODUCT_API_URL);
+export const getAllProducts = async () => {
+    const response = await axios.get(API_URL);
+    return response.data;
+};
 
-        if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status}`);
-        }
+export const getProductById = async (id: number) => {
+    const response = await axios.get(`${API_URL}/${id}`);
+    return response.data;
+};
 
-        const data: BackendProduct[] = await response.json();
-        
-        return data.map((item) => ({
-            id: item.id,
-            name: item.name,
-            precio: item.precio,
-            descripcion: item.descripcion,
-            imagen: item.imagen || '/img/default.png', 
-            categoria: item.categoria,
-            stock: item.stock
-        }));
+export const createProduct = async (product: any) => {
+    const response = await axios.post(API_URL, product, { headers: authHeader() });
+    return response.data;
+};
 
-    } catch (error) {
-        console.error("❌ Error al obtener productos:", error);
-        return []; 
-    }
+export const updateProduct = async (id: number, product: any) => {
+    const response = await axios.put(`${API_URL}/${id}`, product, { headers: authHeader() });
+    return response.data;
+};
+
+export const deleteProduct = async (id: number) => {
+    await axios.delete(`${API_URL}/${id}`, { headers: authHeader() });
 };

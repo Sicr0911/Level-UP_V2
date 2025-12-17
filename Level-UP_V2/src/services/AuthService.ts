@@ -1,59 +1,42 @@
-interface LoginRequest {
-    username: string;
-    password: string;
-}
+import axios from 'axios';
 
-interface LoginResponse {
-    token: string;
-    username: string;
-}
+const API_URL = "http://localhost:8080/api";
 
-const API_URL = 'http://localhost:8080/api/v1';
-
-export const AuthService = {
-    
-    login: async (credentials: LoginRequest): Promise<boolean> => {
-        try {
-            console.log("🔵 Intentando login en:", `${API_URL}/login`);
-            
-            const response = await fetch(`${API_URL}/login`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(credentials)
-            });
-
-            if (!response.ok) {
-                console.error("🔴 Error credenciales:", response.status);
-                return false;
-            }
-
-            const data = await response.json();
-            if (data.token) {
-                localStorage.setItem('token', data.token);
-                localStorage.setItem('username', credentials.username);
-                return true;
-            }
-
-            return false;
-        } catch (error) {
-            console.error("🔴 Error de conexión:", error);
-            return false;
+export const login = async (username: string, password: string) => {
+    try {
+        const response = await axios.post(`${API_URL}/login`, { username, password });
+        
+        if (response.data.token) {
+            localStorage.setItem("user", JSON.stringify(response.data));
         }
-    },
+        return response.data;
+    } catch (error) {
+        console.error("Error en login", error);
+        throw error;
+    }
+};
 
-    logout: () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('username');
-        window.location.href = '/'; 
-    },
+export const logout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("carrito");
+    window.location.href = "/login";
+};
 
-    getToken: () => {
-        return localStorage.getItem('token');
-    },
+export const register = async (userData: any) => {
+    return await axios.post(`${API_URL}/users/register`, userData);
+};
 
-    isAuthenticated: () => {
-        return !!localStorage.getItem('token');
+export const getCurrentUser = () => {
+    const userStr = localStorage.getItem("user");
+    if (userStr) return JSON.parse(userStr);
+    return null;
+};
+
+export const authHeader = () => {
+    const user = getCurrentUser();
+    if (user && user.token) {
+        return { Authorization: 'Bearer ' + user.token };
+    } else {
+        return {};
     }
 };

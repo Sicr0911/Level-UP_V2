@@ -1,157 +1,121 @@
 import React, { useState } from 'react';
-import type { Usuario } from '../Interfaces/Usuario'; 
-import AlertMessage from '../Components/AlertMessage';
-import { validateRegistration } from '../Utils/validations';
-
-const primaryColor = '#000000';
-const accentBlue = '#1E90FF';
-const neonGreen = '#39FF14'; 
-const mainText = '#FFFFFF'; 
-const headerFont = 'Orbitron, sans-serif';
-
-const inputStyle: React.CSSProperties = {
-  backgroundColor: '#333',
-  border: `1px solid ${accentBlue}`,
-  color: mainText,
-  borderRadius: '4px',
-};
-
-const buttonStyle: React.CSSProperties = {
-  backgroundColor: neonGreen,
-  color: primaryColor,
-  fontWeight: 'bold',
-};
+import { useNavigate } from 'react-router-dom';
+import { register } from '../services/AuthService';
+import { validateRut, validateEmail, validatePassword } from '../Utils/validations';
 
 const PagRegistro: React.FC = () => {
-  const [nombre, setNombre] = useState('');
-  const [email, setEmail] = useState('');
-  const [fechaNacimiento, setFechaNacimiento] = useState('');
-  const [codigoReferido, setCodigoReferido] = useState('');
-  const [error, setError] = useState('');
-  const [mensajeExito, setMensajeExito] = useState('');
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setMensajeExito('');
-
-    const { EsMayorEdad, EsDuoc, error: validationError } = validateRegistration(fechaNacimiento, email);
-
-    if (!EsMayorEdad) {
-      setError(validationError);
-      return;
-    }
+    const navigate = useNavigate();
     
-    let puntosIniciales = 0;
-    if (codigoReferido) {
-        puntosIniciales = 100;
-        console.log(`Referido detectado: Se otorgarán puntos al referente.`);
-    }
+    const [formData, setFormData] = useState({
+        username: '',
+        password: '',
+        rut: ''
+    });
 
-    const nuevoUsuario: Usuario = {
-      id: Date.now().toString(),
-      nombre,
-      email,
-      fechaNacimiento,
-      EsDuoc,
-      EsMayorEdad: true,
-      puntosLevelUp: puntosIniciales, 
-      nivel: 1,
+    const [error, setError] = useState<string | null>(null);
+    const [success, setSuccess] = useState<string | null>(null);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value
+        });
     };
 
-    console.log('Usuario Registrado:', nuevoUsuario);
-    
-    let mensaje = '✅ ¡Registro exitoso! Prepárate para subir de nivel.';
-    if (EsDuoc) {
-        mensaje += ' ¡Felicidades! Tienes un descuento del 20% de por vida por ser de Duoc.';
-    }
-    if (puntosIniciales > 0) {
-        mensaje += ` Además, ¡ganaste ${puntosIniciales} Puntos LevelUp por tu referido!`;
-    }
-    setMensajeExito(mensaje);
-    
-    setNombre('');
-    setEmail('');
-    setFechaNacimiento('');
-    setCodigoReferido('');
-  };
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError(null);
+        setSuccess(null);
 
-  const formContainerStyle: React.CSSProperties = {
-    backgroundColor: primaryColor,
-    color: mainText,
-    border: `2px solid ${accentBlue}`,
-    fontFamily: 'Roboto, sans-serif'
-  };
+        if (!validateEmail(formData.username)) {
+            setError("El correo debe ser @duoc.cl, @profesor.duoc.cl o @gmail.com");
+            return;
+        }
+        if (!validateRut(formData.rut)) {
+            setError("El RUT ingresado no es válido.");
+            return;
+        }
+        if (!validatePassword(formData.password)) {
+            setError("La contraseña debe tener entre 4 y 10 caracteres.");
+            return;
+        }
 
-  return (
-    <div className="container my-5">
-        <div className="row justify-content-center">
-            <div className="col-12 col-md-8 col-lg-5"> 
-                <div style={formContainerStyle} className="p-4 rounded-3">
-                    <h2 style={{ color: accentBlue, fontFamily: headerFont, textAlign: 'center' }} className="mb-4">
-                        Registro Level-Up | Únete a la Comunidad
-                    </h2>
-                    <form onSubmit={handleSubmit}>
-                        <div className="mb-3">
-                          <label htmlFor="nombre" className="form-label">Nombre de Usuario:</label>
-                          <input
-                            id="nombre"
-                            type="text"
-                            value={nombre}
-                            onChange={(e) => setNombre(e.target.value)}
-                            style={inputStyle}
-                            className="form-control"
-                            required
-                          />
-                        </div>
-                        <div className="mb-3">
-                          <label htmlFor="email" className="form-label">Email (Ej: usuario@duoc.cl):</label>
-                          <input
-                            id="email"
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            style={inputStyle}
-                            className="form-control"
-                            required
-                          />
-                        </div>
-                        <div className="mb-3">
-                          <label htmlFor="fechaNacimiento" className="form-label">Fecha de Nacimiento:</label>
-                          <input
-                            id="fechaNacimiento"
-                            type="date"
-                            value={fechaNacimiento}
-                            onChange={(e) => setFechaNacimiento(e.target.value)}
-                            style={inputStyle}
-                            className="form-control"
-                            required
-                          />
-                        </div>
-                        <div className="mb-4">
-                          <label htmlFor="referido" className="form-label">Código de Referido (Opcional):</label>
-                          <input
-                            id="referido"
-                            type="text"
-                            value={codigoReferido}
-                            onChange={(e) => setCodigoReferido(e.target.value)}
-                            style={inputStyle}
-                            className="form-control"
-                          />
-                        </div>
-                        
-                        {error && <AlertMessage type="error" message={error} />}
-                        {mensajeExito && <AlertMessage type="success" message={mensajeExito} />}
+        try {
+            await register(formData);
+            setSuccess("Usuario registrado con éxito. Redirigiendo al login...");
+            setTimeout(() => navigate('/login'), 2000);
+        } catch (err: any) {
+            if (err.response && err.response.data) {
+                setError(err.response.data.error || "Error al registrar usuario");
+            } else {
+                setError("Error de conexión con el servidor");
+            }
+        }
+    };
 
-                        <button type="submit" style={buttonStyle} className="btn btn-lg w-100">
-                          ¡Registrarse!
-                        </button>
-                    </form>
+    return (
+        <div className="container mt-5">
+            <div className="row justify-content-center">
+                <div className="col-md-6">
+                    <div className="card shadow">
+                        <div className="card-body">
+                            <h2 className="text-center mb-4">Registro Level-Up</h2>
+                            
+                            {error && <div className="alert alert-danger">{error}</div>}
+                            {success && <div className="alert alert-success">{success}</div>}
+
+                            <form onSubmit={handleSubmit}>
+                                <div className="mb-3">
+                                    <label className="form-label">Correo Electrónico</label>
+                                    <input 
+                                        type="email" 
+                                        name="username" 
+                                        className="form-control" 
+                                        placeholder="usuario@duoc.cl"
+                                        value={formData.username}
+                                        onChange={handleChange}
+                                        required 
+                                    />
+                                    <small className="text-muted">Solo dominios duoc.cl o gmail.com</small>
+                                </div>
+
+                                <div className="mb-3">
+                                    <label className="form-label">RUT (sin puntos ni guion)</label>
+                                    <input 
+                                        type="text" 
+                                        name="rut" 
+                                        className="form-control" 
+                                        placeholder="12345678K"
+                                        value={formData.rut}
+                                        onChange={handleChange}
+                                        maxLength={9}
+                                        required 
+                                    />
+                                </div>
+
+                                <div className="mb-3">
+                                    <label className="form-label">Contraseña</label>
+                                    <input 
+                                        type="password" 
+                                        name="password" 
+                                        className="form-control" 
+                                        value={formData.password}
+                                        onChange={handleChange}
+                                        required 
+                                    />
+                                    <small className="text-muted">Entre 4 y 10 caracteres</small>
+                                </div>
+
+                                <div className="d-grid gap-2">
+                                    <button type="submit" className="btn btn-primary">Registrarse</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-  );
+    );
 };
 
 export default PagRegistro;

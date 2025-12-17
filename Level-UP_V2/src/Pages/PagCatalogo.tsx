@@ -1,139 +1,102 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import ProductCard from '../Components/ProductoDesc'; 
-import { fetchAllProducts } from '../services/ProductoAPIService'; 
-import type { Producto } from '../Interfaces/Producto';
+import React, { useEffect, useState } from 'react';
+import { getAllProducts } from '../services/ProductoAPIService';
+import { Producto } from '../Interfaces/Producto';
 
 interface PagCatalogoProps {
-    onAddToCart: (producto: Producto) => void; 
+  onAddToCart: (producto: Producto) => void;
 }
 
-const primaryColor = '#000000';
-const accentBlue = '#1E90FF';
-const neonGreen = '#39FF14';
-const mainText = '#FFFFFF';
-const headerFont = 'Orbitron, sans-serif';
-
 const PagCatalogo: React.FC<PagCatalogoProps> = ({ onAddToCart }) => {
-    
-    const [products, setProducts] = useState<Producto[]>([]);
-    const [loading, setLoading] = useState(true);
-    
-    const [searchTerm, setSearchTerm] = useState('');
-    const [selectedCategory, setSelectedCategory] = useState('Todos');
-    
-    useEffect(() => {
-        const loadProducts = async () => {
-            setLoading(true);
-            const fetchedProducts = await fetchAllProducts();
-            setProducts(fetchedProducts);
-            setLoading(false);
-        };
-        loadProducts();
-    }, []); 
+  const [productos, setProductos] = useState<Producto[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [filtroCategoria, setFiltroCategoria] = useState<string>('Todas');
 
-    const allCategories = useMemo(() => {
-        return ['Todos', ...new Set(products.map(p => p.categoria))];
-    }, [products]);
-
-    const filteredProducts = useMemo(() => {
-        let tempProducts = products;
-
-        if (selectedCategory !== 'Todos') {
-            tempProducts = tempProducts.filter(p => p.categoria === selectedCategory);
-        }
-
-        if (searchTerm) {
-            const lowerCaseSearch = searchTerm.toLowerCase();
-            tempProducts = tempProducts.filter(p => 
-                p.nombre.toLowerCase().includes(lowerCaseSearch) ||
-                p.descripcion.toLowerCase().includes(lowerCaseSearch)
-            );
-        }
-
-        return tempProducts;
-    }, [searchTerm, selectedCategory, products]);
-
-    const pageStyle: React.CSSProperties = {
-        backgroundColor: primaryColor,
-        minHeight: '100vh',
-        color: mainText,
+  useEffect(() => {
+    const fetchProductos = async () => {
+      try {
+        const data = await getAllProducts();
+        setProductos(data);
+      } catch (err) {
+        setError("Error al cargar los productos. Asegúrate de que el backend esté corriendo.");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
     };
+    fetchProductos();
+  }, []);
 
-    const headerStyle: React.CSSProperties = {
-        textAlign: 'center',
-        fontFamily: headerFont,
-        color: accentBlue,
-    };
+  const categorias = ['Todas', ...new Set(productos.map(p => p.categoria))];
 
-    const filterContainerStyle: React.CSSProperties = {
-        backgroundColor: '#111',
-        border: `1px solid ${accentBlue}`,
-    };
+  const productosFiltrados = filtroCategoria === 'Todas' 
+    ? productos 
+    : productos.filter(p => p.categoria === filtroCategoria);
 
-    const inputStyle: React.CSSProperties = {
-        backgroundColor: '#333',
-        color: mainText,
-        border: `1px solid ${accentBlue}`,
-    };
-    
-    if (loading) {
-        return (
-             <div className="container-fluid p-4 text-center">
-                 <h2 style={{ color: neonGreen, fontFamily: headerFont }}>Cargando datos del Backend... 🚀</h2>
-             </div>
-        );
-    }
-    
-    return (
-        <div style={pageStyle} className="container-fluid p-4">
-            <h2 style={headerStyle} className="mb-4">🎮 Catálogo de Productos Level-Up Gamer 🎮</h2>
+  if (loading) return <div className="text-center mt-5"><div className="spinner-border text-primary"></div><p>Cargando catálogo...</p></div>;
+  if (error) return <div className="alert alert-danger text-center mt-5">{error}</div>;
 
-            <div className="row justify-content-center g-3 p-3 rounded-3 mb-4" style={filterContainerStyle}>
+  return (
+    <div className="container py-5">
+      <h2 className="text-center mb-4 display-5 fw-bold text-uppercase" style={{ color: '#00d2ff', textShadow: '0 0 10px rgba(0,210,255,0.5)' }}>
+        Catálogo Gamer
+      </h2>
+
+      <div className="d-flex justify-content-center flex-wrap gap-2 mb-5">
+        {categorias.map(cat => (
+          <button 
+            key={cat} 
+            className={`btn ${filtroCategoria === cat ? 'btn-primary' : 'btn-outline-secondary'}`}
+            onClick={() => setFiltroCategoria(cat)}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+
+      <div className="row row-cols-1 row-cols-md-3 g-4">
+        {productosFiltrados.map((producto) => (
+          <div className="col" key={producto.id}>
+            <div className="card h-100 shadow-sm bg-dark text-white border-secondary">
+              <img 
+                src={producto.imagen.startsWith('/') ? producto.imagen : `/IMG/${producto.imagen}`} 
+                className="card-img-top p-3" 
+                alt={producto.name}
+                style={{ height: '250px', objectFit: 'contain' }}
+                onError={(e) => {
+                   (e.target as HTMLImageElement).src = 'https://via.placeholder.com/250?text=No+Image';
+                }}
+              />
+              <div className="card-body d-flex flex-column">
+                <h5 className="card-title fw-bold">{producto.name}</h5>
+                <p className="card-text text-muted small">{producto.categoria}</p>
+                <p className="card-text flex-grow-1">{producto.descripcion.substring(0, 80)}...</p>
                 
-                <div className="col-12 col-lg-5">
-                    <input
-                        type="text"
-                        placeholder="Buscar por nombre o descripción..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        style={inputStyle}
-                        className="form-control"
-                    />
-                </div>
-
-                <div className="col-12 col-lg-4">
-                    <select
-                        value={selectedCategory}
-                        onChange={(e) => setSelectedCategory(e.target.value)}
-                        style={inputStyle}
-                        className="form-select"
+                <div className="mt-auto">
+                    <div className="d-flex justify-content-between align-items-center mb-3">
+                        <span className="fs-4 fw-bold text-success">
+                            ${producto.precio.toLocaleString('es-CL')}
+                        </span>
+                        <span className={`badge ${producto.stock > 0 ? 'bg-success' : 'bg-danger'}`}>
+                            {producto.stock > 0 ? `Stock: ${producto.stock}` : 'Agotado'}
+                        </span>
+                    </div>
+                    
+                    <button 
+                        className="btn btn-primary w-100 fw-bold"
+                        onClick={() => onAddToCart(producto)}
+                        disabled={producto.stock === 0}
                     >
-                        <option value="Todos">Todas las Categorías</option>
-                        {allCategories.map(category => (
-                            <option key={category} value={category}>{category}</option>
-                        ))}
-                    </select>
+                        {producto.stock > 0 ? '🛒 Añadir al Carrito' : 'Sin Stock'}
+                    </button>
                 </div>
+              </div>
             </div>
-
-            {filteredProducts.length === 0 ? (
-                <p style={{textAlign: 'center', color: neonGreen, fontSize: '1.2em'}}>
-                    {products.length === 0 ? "No hay productos disponibles en el catálogo." : "No se encontraron productos que coincidan con los filtros."}
-                </p>
-            ) : (
-                <div className="row justify-content-center g-4">
-                    {filteredProducts.map((producto) => (
-                        <div key={producto.codigo} className="col-12 col-md-6 col-lg-4 col-xl-3 d-flex justify-content-center">
-                            <ProductCard 
-                                producto={producto} 
-                                onAddToCart={onAddToCart} 
-                            />
-                        </div>
-                    ))}
-                </div>
-            )}
-        </div>
-    );
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 };
 
 export default PagCatalogo;
